@@ -1,0 +1,1637 @@
+/**
+
+ * Amaska Artisanal Sweets & Savouries
+
+ * 3D Interactive Website Engine
+
+ */
+
+(function () {
+
+  'use strict';
+
+
+
+  var isMobile = function () { return window.innerWidth <= 860; };
+
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+
+  // Utility functions
+
+  var clamp = function (v, min, max) { return Math.min(max, Math.max(min, v)); };
+
+  var norm = function (v, start, end) { return clamp((v - start) / (end - start), 0, 1); };
+
+  var easeInOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+
+
+  // Set real viewport height for mobile browser URL bar resizing
+
+  function setVh() {
+
+    document.documentElement.style.setProperty('--vh', window.innerHeight + 'px');
+
+  }
+
+  setVh();
+
+  window.addEventListener('resize', setVh, { passive: true });
+
+
+
+  // Mobile navigation drawer
+
+  var menuToggle = document.getElementById('menu-toggle');
+
+  var nav = document.getElementById('nav');
+
+  if (menuToggle && nav) {
+
+    menuToggle.addEventListener('click', function () {
+
+      var isOpen = nav.classList.toggle('open');
+
+      menuToggle.setAttribute('aria-expanded', isOpen);
+
+    });
+
+    nav.addEventListener('click', function (e) {
+
+      if (e.target.tagName === 'A') {
+
+        nav.classList.remove('open');
+
+        menuToggle.setAttribute('aria-expanded', 'false');
+
+      }
+
+    });
+
+  }
+
+
+
+  // Top header style switch
+
+  var topBar = document.getElementById('top-bar');
+
+
+
+  // ==========================================================================
+
+  // HERO: Pinned Scroll-Scrubbed Box Opening Animation
+
+  // Matches exact recording from user (video/hero-16x9.mp4)
+
+  // ==========================================================================
+
+  var heroSec = document.querySelector('[data-scene="hero"]');
+
+  var heroFrame = heroSec ? heroSec.querySelector('#hero-frame') : null;
+
+  var heroLines = heroSec ? heroSec.querySelectorAll('.line') : [];
+
+  var heroCue = heroSec ? heroSec.querySelector('.cue') : null;
+
+  var heroStill = heroFrame ? heroFrame.querySelector('.still') : null;
+
+  var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
+
+
+
+  if (!heroVideo && heroFrame) {
+
+    heroVideo = document.createElement('video');
+
+    heroVideo.muted = true;
+
+    heroVideo.playsInline = true;
+
+    heroVideo.preload = 'auto';
+
+    heroVideo.setAttribute('muted', '');
+
+    heroVideo.setAttribute('playsinline', '');
+
+    heroVideo.src = 'video/hero-16x9.mp4';
+
+    heroFrame.insertBefore(heroVideo, heroFrame.firstChild);
+
+  }
+
+
+
+  var heroClip = {
+
+    v: heroVideo,
+
+    ready: false,
+
+    t: null,
+
+    duration: 9.958
+
+  };
+
+
+
+  function setHeroReady() {
+
+    if (heroClip.ready) return;
+
+    heroClip.ready = true;
+
+    if (heroVideo && heroVideo.duration && !isNaN(heroVideo.duration) && heroVideo.duration > 1) {
+
+      heroClip.duration = heroVideo.duration;
+
+    }
+
+    if (heroSec) heroSec.classList.add('has-clip');
+
+    if (heroFrame) heroFrame.classList.add('has-clip');
+
+  }
+
+
+
+  if (heroVideo) {
+
+    heroVideo.addEventListener('loadedmetadata', setHeroReady);
+
+    heroVideo.addEventListener('loadeddata', setHeroReady);
+
+    heroVideo.addEventListener('canplay', setHeroReady);
+
+    heroVideo.addEventListener('canplaythrough', setHeroReady);
+
+    heroVideo.addEventListener('timeupdate', setHeroReady);
+
+    if (heroVideo.readyState >= 1) {
+
+      setHeroReady();
+
+    }
+
+    // Prime the video decoder with muted play and pause
+
+    try {
+
+      var primePlay = heroVideo.play();
+
+      if (primePlay && primePlay.then) {
+
+        primePlay.then(function () {
+
+          heroVideo.pause();
+
+          heroVideo.currentTime = 0;
+
+          setHeroReady();
+
+        }).catch(function () {
+
+          setHeroReady();
+
+        });
+
+      } else {
+
+        setHeroReady();
+
+      }
+
+    } catch (_) {
+
+      setHeroReady();
+
+    }
+
+
+
+    // Pre-fetch video as a Blob for 100% in-memory 60fps instant scrubbing
+
+    try {
+
+      fetch('video/hero-16x9.mp4')
+
+        .then(function (res) { return res.blob(); })
+
+        .then(function (blob) {
+
+          if (!blob || blob.size < 1000) return;
+
+          var blobUrl = URL.createObjectURL(blob);
+
+          var curT = heroVideo.currentTime || 0;
+
+          heroVideo.src = blobUrl;
+
+          heroVideo.currentTime = curT;
+
+          setHeroReady();
+
+        })
+
+        .catch(function () {});
+
+    } catch (_) {}
+
+  }
+
+
+
+  function scrubHero(c, p) {
+
+    if (!c || !c.v) return;
+
+    var dur = (c.v.duration && !isNaN(c.v.duration) && c.v.duration > 1) ? c.v.duration : c.duration;
+
+    var target = clamp(p, 0, 1) * (dur - 0.05);
+
+    c.t = (c.t == null) ? target : c.t + (target - c.t) * 0.25;
+
+    if (!c.v.seeking && Math.abs(c.v.currentTime - c.t) > 0.02) {
+
+      c.v.currentTime = c.t;
+
+    }
+
+  }
+
+
+
+  // ==========================================================================
+
+  // LIVING 3D MENU BOOK ENGINE (Section 3: Our Sweets Menu)
+
+  // Two-page luxury recipe book with live videos & smooth page turning
+
+  // ==========================================================================
+
+  // Living 10-Page Recipe Book Data (Ordered by exact book page numbers 01 to 10)
+
+  var SWEETS_BOOK_DATA = [
+
+    {
+
+      id: 'g12',
+
+      name: 'Gulab Jamun',
+
+      price: '₹180 / 4 pcs',
+
+      video: 'video/page-01-gulab-jamun-16x9.mp4',
+
+      photo: 'assets/poster-01-gulab-jamun.webp'
+
+    },
+
+    {
+
+      id: 'g11',
+
+      name: 'Kesar Spirals',
+
+      price: '₹380 / 500g',
+
+      video: 'video/page-kesar-spirals-16x9.mp4',
+
+      photo: 'assets/poster-kesar.webp'
+
+    },
+
+    {
+
+      id: 'g07',
+
+      name: 'Mysore Pak',
+
+      price: '₹820 / kg',
+
+      video: 'video/page-mysore-pak-16x9.mp4',
+
+      photo: 'assets/poster-mysore.webp'
+
+    },
+
+    {
+
+      id: 'g05',
+
+      name: 'Kaju Katli',
+
+      price: '₹1,200 / kg',
+
+      video: 'video/page-kaju-katli-16x9.mp4',
+
+      photo: 'assets/poster-kaju-katli.webp'
+
+    },
+
+    {
+
+      id: 'g01',
+
+      name: 'Pista Roll',
+
+      price: '₹1,640 / kg',
+
+      video: 'video/page-pista-roll-16x9.mp4',
+
+      photo: 'assets/poster-pista-roll.webp'
+
+    },
+
+    {
+
+      id: 'g03',
+
+      name: 'Kaju Apple',
+
+      price: '₹1,640 / kg',
+
+      video: 'video/page-kaju-apple-16x9.mp4',
+
+      photo: 'assets/poster-kaju-apple.webp'
+
+    },
+
+    {
+
+      id: 'g02',
+
+      name: 'Kaju Flower',
+
+      price: '₹1,640 / kg',
+
+      video: 'video/page-kaju-flower-16x9.mp4',
+
+      photo: 'assets/poster-kaju-flower.webp'
+
+    },
+
+    {
+
+      id: 'g06',
+
+      name: 'Dry Fruit Sandwich',
+
+      price: '₹1,640 / kg',
+
+      video: 'video/page-df-sandwich-16x9.mp4',
+
+      photo: 'assets/poster-df-sandwich.webp'
+
+    },
+
+    {
+
+      id: 'g08',
+
+      name: 'Gujiya',
+
+      price: '₹420 / 500g',
+
+      video: 'video/page-gujiya-16x9.mp4',
+
+      photo: 'assets/poster-gujiya.webp'
+
+    },
+
+    {
+
+      id: 'g09',
+
+      name: 'Balushai',
+
+      price: '₹410 / 500g',
+
+      video: 'video/page-balushai-16x9.mp4',
+
+      photo: 'assets/poster-balushai.webp'
+
+    }
+
+  ];
+
+
+
+  // ==========================================================================
+  // Section 3: Authentic Ring-Bound 3D Menu Book Engine (#sweets)
+  // - 10 Physical 3D Sheets, each hinged on left edge next to rings
+  // - Forward: rotateY(0deg -> -180deg) over 1050ms with corner curl & shadows
+  // - Backward: rotateY(-180deg -> 0deg)
+  // - Multi-flip cascade: clicking far number flips pages quickly (~220ms each)
+  // - Video management: Only active page video plays; hidden videos paused
+  // - Keyboard (left/right) & touch swipe
+  // - UI update: PAGE 01 / 10, sweet name, price, active pill
+  // ==========================================================================
+  function initSweetsBook() {
+    var secEl = document.getElementById('sweets');
+    if (!secEl) return;
+
+    var sheetsStack = document.getElementById('book-sheets-stack');
+    if (!sheetsStack) return;
+
+    var sheets = Array.from(sheetsStack.querySelectorAll('.book-sheet'));
+    var flexLayers = sheets.map(function (s) { return s.querySelector('.sheet-curl-flex'); });
+    var underShadow = document.getElementById('book-under-shadow');
+
+    var pageNumEl = document.getElementById('book-page-num');
+    var titleEl = document.getElementById('book-sweet-title');
+    var priceEl = document.getElementById('book-sweet-price');
+
+    var prevBtn = document.getElementById('book-prev-btn');
+    var nextBtn = document.getElementById('book-next-btn');
+    var tabsNav = document.getElementById('book-tabs-nav');
+    var tabPills = tabsNav ? Array.from(tabsNav.querySelectorAll('.strip-tab-pill')) : [];
+
+    var currentPage = 0; // 0 to 9
+    var totalPages = sheets.length;
+    var isTurning = false;
+    var autoTurnTimer = null;
+    var autoTurnDelay = 10000; // 10s auto turn
+    var userPauseTimer = null;
+
+    // Helper: get video on a sheet
+    function getVideo(pageIdx) {
+      if (pageIdx < 0 || pageIdx >= totalPages) return null;
+      return sheets[pageIdx].querySelector('video');
+    }
+
+    // Play active video safely
+    function playPageVideo(pageIdx) {
+      var v = getVideo(pageIdx);
+      if (v) {
+        v.currentTime = 0;
+        var p = v.play();
+        if (p !== undefined) p.catch(function () {});
+      }
+    }
+
+    // Pause video safely
+    function pausePageVideo(pageIdx) {
+      var v = getVideo(pageIdx);
+      if (v) {
+        try { v.pause(); } catch (_) {}
+      }
+    }
+
+    // Update bottom UI controls
+    function updateUI(pageIdx) {
+      var data = SWEETS_BOOK_DATA[pageIdx];
+      if (!data) return;
+
+      if (pageNumEl) pageNumEl.textContent = 'PAGE ' + String(pageIdx + 1).padStart(2, '0') + ' / ' + String(totalPages).padStart(2, '0');
+      if (titleEl) titleEl.textContent = data.name;
+      if (priceEl) priceEl.textContent = data.price;
+
+      tabPills.forEach(function (pill, i) {
+        var active = (i === pageIdx);
+        pill.classList.toggle('is-active', active);
+        pill.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      sheets.forEach(function (s, i) {
+        s.classList.toggle('is-active', i === pageIdx);
+      });
+    }
+
+    // Single Page Turn Forward (Page N -> N + 1)
+    function turnForwardSingle(fromIdx, duration, callback) {
+      var sheet = sheets[fromIdx];
+      var flex = flexLayers[fromIdx];
+      var dur = duration || 1050;
+      var ease = 'cubic-bezier(0.28, 0.84, 0.42, 1)';
+
+      sheet.style.transition = 'transform ' + dur + 'ms ' + ease;
+      flex.style.transition = 'transform ' + dur + 'ms ' + ease;
+      if (underShadow) {
+        underShadow.style.transition = 'transform ' + dur + 'ms ' + ease + ', opacity ' + dur + 'ms ease';
+        underShadow.style.transform = 'scaleX(0.8)';
+        underShadow.style.opacity = '0.7';
+      }
+
+      // Animate 3D rotation & corner curl
+      sheet.style.transform = 'rotateY(-180deg)';
+      flex.style.transform = 'rotate3d(1, -0.4, 0.1, 16deg) skew(-2deg, -1deg)';
+
+      // Mid-turn: update z-index for left stack & start next video
+      setTimeout(function () {
+        sheet.style.zIndex = fromIdx + 1;
+        playPageVideo(fromIdx + 1);
+        if (underShadow) {
+          underShadow.style.transform = 'scaleX(0.1)';
+          underShadow.style.opacity = '0';
+        }
+      }, Math.round(dur * 0.48));
+
+      // End of turn: flatten curl, pause previous video
+      setTimeout(function () {
+        flex.style.transition = 'none';
+        flex.style.transform = 'none';
+        pausePageVideo(fromIdx);
+        if (callback) callback();
+      }, dur + 20);
+    }
+
+    // Single Page Turn Backward (Page N -> N - 1)
+    function turnBackwardSingle(fromIdx, duration, callback) {
+      var targetIdx = fromIdx - 1;
+      var sheet = sheets[targetIdx];
+      var flex = flexLayers[targetIdx];
+      var dur = duration || 1050;
+      var ease = 'cubic-bezier(0.28, 0.84, 0.42, 1)';
+
+      // Bring sheet to top of turn stack
+      sheet.style.zIndex = totalPages + 2;
+
+      sheet.style.transition = 'transform ' + dur + 'ms ' + ease;
+      flex.style.transition = 'transform ' + dur + 'ms ' + ease;
+      if (underShadow) {
+        underShadow.style.transition = 'transform ' + dur + 'ms ' + ease + ', opacity ' + dur + 'ms ease';
+        underShadow.style.transform = 'scaleX(0.8)';
+        underShadow.style.opacity = '0.7';
+      }
+
+      // Animate 3D rotation back to 0deg
+      sheet.style.transform = 'rotateY(0deg)';
+      flex.style.transform = 'rotate3d(1, 0.4, -0.1, 16deg) skew(2deg, 1deg)';
+
+      // Mid-turn: start incoming video
+      setTimeout(function () {
+        playPageVideo(targetIdx);
+        if (underShadow) {
+          underShadow.style.transform = 'scaleX(0.1)';
+          underShadow.style.opacity = '0';
+        }
+      }, Math.round(dur * 0.48));
+
+      // End of turn: reset z-index and flatten
+      setTimeout(function () {
+        flex.style.transition = 'none';
+        flex.style.transform = 'none';
+        sheet.style.zIndex = totalPages - targetIdx;
+        pausePageVideo(fromIdx);
+        if (callback) callback();
+      }, dur + 20);
+    }
+
+    // Master turnToPage: handles single flips and rapid cascade flips
+    function turnToPage(targetPage) {
+      if (isTurning || targetPage === currentPage) return;
+      if (targetPage < 0 || targetPage >= totalPages) return;
+
+      isTurning = true;
+      var delta = targetPage - currentPage;
+
+      if (delta === 1) {
+        // Normal single forward turn (1050ms)
+        turnForwardSingle(currentPage, 1050, function () {
+          currentPage = targetPage;
+          updateUI(currentPage);
+          isTurning = false;
+        });
+      } else if (delta === -1) {
+        // Normal single backward turn (1050ms)
+        turnBackwardSingle(currentPage, 1050, function () {
+          currentPage = targetPage;
+          updateUI(currentPage);
+          isTurning = false;
+        });
+      } else if (delta > 1) {
+        // Rapid cascade forward (220ms per sheet)
+        var step = currentPage;
+        function cascadeForward() {
+          if (step < targetPage) {
+            var curStep = step;
+            step++;
+            var isLast = (step === targetPage);
+            turnForwardSingle(curStep, 220, function () {
+              if (isLast) {
+                currentPage = targetPage;
+                updateUI(currentPage);
+                isTurning = false;
+              } else {
+                cascadeForward();
+              }
+            });
+          }
+        }
+        cascadeForward();
+      } else if (delta < -1) {
+        // Rapid cascade backward (220ms per sheet)
+        var stepB = currentPage;
+        function cascadeBackward() {
+          if (stepB > targetPage) {
+            var curStepB = stepB;
+            stepB--;
+            var isLastB = (stepB === targetPage);
+            turnBackwardSingle(curStepB, 220, function () {
+              if (isLastB) {
+                currentPage = targetPage;
+                updateUI(currentPage);
+                isTurning = false;
+              } else {
+                cascadeBackward();
+              }
+            });
+          }
+        }
+        cascadeBackward();
+      }
+    }
+
+    // Next button
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        turnToPage((currentPage + 1) % totalPages);
+        pauseAutoTurnForUser();
+      });
+    }
+
+    // Prev button
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        turnToPage((currentPage - 1 + totalPages) % totalPages);
+        pauseAutoTurnForUser();
+      });
+    }
+
+    // Number pills click
+    tabPills.forEach(function (pill, i) {
+      pill.addEventListener('click', function () {
+        turnToPage(i);
+        pauseAutoTurnForUser();
+      });
+    });
+
+    // Keyboard navigation (Left / Right)
+    window.addEventListener('keydown', function (e) {
+      if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+      if (e.key === 'ArrowRight') {
+        turnToPage((currentPage + 1) % totalPages);
+        pauseAutoTurnForUser();
+      } else if (e.key === 'ArrowLeft') {
+        turnToPage((currentPage - 1 + totalPages) % totalPages);
+        pauseAutoTurnForUser();
+      }
+    });
+
+    // Touch swipe support on mobile
+    var touchStartX = 0;
+    secEl.addEventListener('touchstart', function (e) {
+      if (e.changedTouches && e.changedTouches[0]) touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    secEl.addEventListener('touchend', function (e) {
+      if (e.changedTouches && e.changedTouches[0]) {
+        var diffX = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX < 0) {
+            turnToPage((currentPage + 1) % totalPages);
+          } else {
+            turnToPage((currentPage - 1 + totalPages) % totalPages);
+          }
+          pauseAutoTurnForUser();
+        }
+      }
+    }, { passive: true });
+
+    // Auto turn timer
+    function startAutoTurn() {
+      stopAutoTurn();
+      if (prefersReducedMotion) return;
+      autoTurnTimer = setInterval(function () {
+        if (!isTurning) {
+          turnToPage((currentPage + 1) % totalPages);
+        }
+      }, autoTurnDelay);
+    }
+
+    function stopAutoTurn() {
+      if (autoTurnTimer) {
+        clearInterval(autoTurnTimer);
+        autoTurnTimer = null;
+      }
+    }
+
+    function pauseAutoTurnForUser() {
+      stopAutoTurn();
+      if (userPauseTimer) clearTimeout(userPauseTimer);
+      userPauseTimer = setTimeout(function () {
+        if (isBookInView) startAutoTurn();
+      }, 16000);
+    }
+
+    // Observer: only auto turn when in view
+    var isBookInView = false;
+    var bookObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        isBookInView = entry.isIntersecting;
+        if (isBookInView) {
+          playPageVideo(currentPage);
+          startAutoTurn();
+        } else {
+          pausePageVideo(currentPage);
+          stopAutoTurn();
+        }
+      });
+    }, { threshold: 0.25 });
+    bookObserver.observe(secEl);
+
+    // Initial setup
+    updateUI(0);
+    playPageVideo(0);
+  }
+
+
+
+  // Initialize sweets book on load
+
+  initSweetsBook();
+
+
+
+  initGiftBoxes();
+
+
+
+  // Cashew falling background video init
+
+  var storyCashewEl = document.getElementById('story-cashew-video');
+
+  if (storyCashewEl) {
+
+    storyCashewEl.muted = true;
+
+    storyCashewEl.defaultMuted = true;
+
+    storyCashewEl.playsInline = true;
+
+    storyCashewEl.play().catch(function () {});
+
+  }
+
+
+
+  // ==========================================================================
+
+  // Gift Boxes: Interactive 3D FLIP Expand & Open
+
+  // ==========================================================================
+
+  function initGiftBoxes() {
+
+    var boxesData = {
+
+      'box-gk': {
+
+        id: 'box-gk',
+
+        name: 'Ghee & Khova Assorted Sweets',
+
+        clip: 'box-gk-16x9',
+
+        still: 'assets/box-gk-closed.webp',
+
+        sizes: [
+
+          { label: '1 kg', price: '₹820', full: '1 kg (₹820)' },
+
+          { label: '500 g', price: '₹410', full: '500 g (₹410)' },
+
+          { label: '250 g', price: '₹205', full: '250 g (₹205)' }
+
+        ],
+
+        contents: 'Motichur Laddu, Banaras Sohanpapdi, Balushai, Bombay Halwa, Besan Laddu, Mysore Pak, Karadant, Doodh Peda, Coconut Burfi, Malt Burfi, Chocolate Stick.'
+
+      },
+
+      'box-df': {
+
+        id: 'box-df',
+
+        name: 'Ghee, Khova & Dry Fruit Assorted',
+
+        clip: 'box-df-16x9',
+
+        still: 'assets/box-df-closed.webp',
+
+        sizes: [
+
+          { label: '1 kg', price: '₹920', full: '1 kg (₹920)' },
+
+          { label: '500 g', price: '₹460', full: '500 g (₹460)' }
+
+        ],
+
+        contents: 'Kaju Katli, Kaju Pine, Anjeer Dry Fruit Roll, Dry Fruit Laddu, Gulkand Burfi, Dry Fruit Halwa, Motichur Laddu, Banaras Sohanpapdi, Mysore Pak, Malt Burfi.'
+
+      },
+
+      'box-royal': {
+
+        id: 'box-royal',
+
+        name: 'Royal Kaju Assorted Sweets',
+
+        clip: 'box-royal-16x9',
+
+        still: 'assets/box-royal-closed.webp',
+
+        sizes: [
+
+          { label: '500 g', price: '₹690', full: '500 g (₹690)' },
+
+          { label: '250 g', price: '₹345', full: '250 g (₹345)' }
+
+        ],
+
+        contents: 'Pure Cashew delicacies: Kaju Katli, Kaju Apple, Kaju Flower, Pista Roll, and Silver Embossed Cashew confections.'
+
+      }
+
+    };
+
+
+
+    var boxKeys = ['box-gk', 'box-df', 'box-royal'];
+
+    var currentBoxKey = 'box-gk';
+
+    var selectedSize = null;
+
+    var activeOriginCard = null;
+
+    var isOpening = false;
+
+    var isClosing = false;
+
+
+
+    var boxesGrid = document.getElementById('boxes-grid');
+
+    var cards = document.querySelectorAll('.box-card[data-box-id]');
+
+    var modal = document.getElementById('box-modal');
+
+    if (!boxesGrid || !modal) return;
+
+
+
+    var modalBackdrop = document.getElementById('box-modal-backdrop');
+
+    var modalClose = document.getElementById('box-modal-close');
+
+    var modalPrev = document.getElementById('box-modal-prev');
+
+    var modalNext = document.getElementById('box-modal-next');
+
+    var modalStage = document.getElementById('box-modal-stage');
+
+    var modalStill = document.getElementById('box-modal-still');
+
+    var modalVideo = document.getElementById('box-modal-video');
+
+    var modalTitle = document.getElementById('box-modal-title');
+
+    var modalSizes = document.getElementById('box-modal-sizes');
+
+    var modalDesc = document.getElementById('box-modal-desc');
+
+    var modalOrder = document.getElementById('box-modal-order');
+
+
+
+    // 1. Desktop Hover: Card lifts translateY(-8px) and tilts slightly in 3D (max 6deg) toward mouse
+
+    cards.forEach(function (card) {
+
+      card.addEventListener('mousemove', function (e) {
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 960) return;
+
+        var r = card.getBoundingClientRect();
+
+        var x = (e.clientX - r.left) / r.width - 0.5;
+
+        var y = (e.clientY - r.top) / r.height - 0.5;
+
+        var rotX = -y * 8;
+
+        var rotY = x * 8;
+
+        card.style.transform = 'translateY(-8px) rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg)';
+
+      });
+
+
+
+      card.addEventListener('mouseleave', function () {
+
+        card.style.transform = '';
+
+      });
+
+
+
+      // Tap / Click to open big
+
+      card.addEventListener('click', function () {
+
+        var boxId = card.getAttribute('data-box-id');
+
+        openBoxModal(boxId, card);
+
+      });
+
+
+
+      card.addEventListener('keydown', function (e) {
+
+        if (e.key === 'Enter' || e.key === ' ') {
+
+          e.preventDefault();
+
+          var boxId = card.getAttribute('data-box-id');
+
+          openBoxModal(boxId, card);
+
+        }
+
+      });
+
+    });
+
+
+
+    function updateDetails(box) {
+
+      currentBoxKey = box.id;
+
+      modalTitle.textContent = box.name;
+
+      modalDesc.textContent = box.contents;
+
+      modalSizes.innerHTML = '';
+
+
+
+      selectedSize = box.sizes[0];
+
+
+
+      box.sizes.forEach(function (sz, idx) {
+
+        var btn = document.createElement('button');
+
+        btn.type = 'button';
+
+        btn.className = 'box-modal-size-btn' + (idx === 0 ? ' active' : '');
+
+        btn.innerHTML = '<small>' + sz.label + '</small><b>' + sz.price + '</b>';
+
+        btn.addEventListener('click', function () {
+
+          modalSizes.querySelectorAll('.box-modal-size-btn').forEach(function (b) { b.classList.remove('active'); });
+
+          btn.classList.add('active');
+
+          selectedSize = sz;
+
+          updateOrderLink(box, sz);
+
+        });
+
+        modalSizes.appendChild(btn);
+
+      });
+
+
+
+      updateOrderLink(box, selectedSize);
+
+    }
+
+
+
+    function updateOrderLink(box, sz) {
+
+      var msg = 'Hello Amaska, I would like to order the ' + box.name + ' (' + sz.full + ').';
+
+      modalOrder.href = 'https://wa.me/919663897371?text=' + encodeURIComponent(msg);
+
+    }
+
+
+
+    function openBoxModal(boxId, cardEl) {
+
+      if (isOpening || isClosing) return;
+
+      var box = boxesData[boxId];
+
+      if (!box) return;
+
+
+
+      isOpening = true;
+
+      activeOriginCard = cardEl || document.querySelector('.box-card[data-box-id="' + boxId + '"]');
+
+
+
+      // Lock scrolling
+
+      document.body.style.overflow = 'hidden';
+
+
+
+      // Other cards fade back and blur
+
+      boxesGrid.classList.add('has-open-box');
+
+      cards.forEach(function (c) {
+
+        if (c === activeOriginCard) c.classList.add('is-active');
+
+        else c.classList.remove('is-active');
+
+      });
+
+
+
+      // Populate details
+
+      updateDetails(box);
+
+
+
+      // Set still image first
+
+      modalStill.src = box.still;
+
+      modalStill.alt = box.name;
+
+      modalStage.classList.remove('has-video');
+
+
+
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+
+      // Get origin card media rect for FLIP
+
+      var originMedia = activeOriginCard ? activeOriginCard.querySelector('.box-media') : null;
+
+      var rectCard = originMedia ? originMedia.getBoundingClientRect() : null;
+
+
+
+      // Open modal
+
+      modal.classList.add('open');
+
+      modal.setAttribute('aria-hidden', 'false');
+
+
+
+      if (!prefersReducedMotion && rectCard) {
+
+        var rectTarget = modalStage.getBoundingClientRect();
+
+        var dx = rectCard.left - rectTarget.left;
+
+        var dy = rectCard.top - rectTarget.top;
+
+        var sx = rectCard.width / rectTarget.width;
+
+        var sy = rectCard.height / rectTarget.height;
+
+
+
+        modalStage.style.transition = 'none';
+
+        modalStage.style.transformOrigin = '0 0';
+
+        modalStage.style.transform = 'translate3d(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px, 0) scale(' + sx.toFixed(3) + ', ' + sy.toFixed(3) + ') rotateY(8deg)';
+
+
+
+        modalStage.offsetHeight; // Force reflow
+
+
+
+        modalStage.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+        modalStage.style.transform = 'translate3d(0, 0, 0) scale(1, 1) rotateY(0deg)';
+
+      }
+
+
+
+      // Play video once arrival finishes
+
+      setTimeout(function () {
+
+        isOpening = false;
+
+        playBoxVideo(box.clip);
+
+      }, prefersReducedMotion ? 100 : 750);
+
+    }
+
+
+
+    function playBoxVideo(clipName) {
+
+      modalVideo.pause();
+
+      modalVideo.src = 'video/' + clipName + '.mp4';
+
+      modalVideo.currentTime = 0;
+
+      modalVideo.load();
+
+
+
+      modalVideo.oncanplay = function () {
+
+        modalStage.classList.add('has-video');
+
+        var playPromise = modalVideo.play();
+
+        if (playPromise !== undefined) {
+
+          playPromise.catch(function () {});
+
+        }
+
+      };
+
+
+
+      modalVideo.onended = function () {
+
+        // Keeps the box open, paused on the last frame
+
+      };
+
+    }
+
+
+
+    function closeBoxModal() {
+
+      if (isClosing) return;
+
+      isClosing = true;
+
+
+
+      modalVideo.pause();
+
+
+
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var originMedia = activeOriginCard ? activeOriginCard.querySelector('.box-media') : null;
+
+      var rectCard = originMedia ? originMedia.getBoundingClientRect() : null;
+
+
+
+      if (!prefersReducedMotion && rectCard) {
+
+        var rectTarget = modalStage.getBoundingClientRect();
+
+        var dx = rectCard.left - rectTarget.left;
+
+        var dy = rectCard.top - rectTarget.top;
+
+        var sx = rectCard.width / rectTarget.width;
+
+        var sy = rectCard.height / rectTarget.height;
+
+
+
+        modalStage.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+        modalStage.style.transform = 'translate3d(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px, 0) scale(' + sx.toFixed(3) + ', ' + sy.toFixed(3) + ')';
+
+      }
+
+
+
+      modal.classList.remove('open');
+
+      modal.setAttribute('aria-hidden', 'true');
+
+
+
+      setTimeout(function () {
+
+        modalStage.style.transform = '';
+
+        modalStage.style.transition = '';
+
+        modalStage.classList.remove('has-video');
+
+        modalVideo.src = '';
+
+        document.body.style.overflow = '';
+
+        boxesGrid.classList.remove('has-open-box');
+
+        cards.forEach(function (c) { c.classList.remove('is-active'); });
+
+        isClosing = false;
+
+      }, prefersReducedMotion ? 100 : 580);
+
+    }
+
+
+
+    function navigateBox(direction) {
+
+      var currentIndex = boxKeys.indexOf(currentBoxKey);
+
+      if (currentIndex === -1) currentIndex = 0;
+
+      var nextIndex = (currentIndex + direction + boxKeys.length) % boxKeys.length;
+
+      var nextKey = boxKeys[nextIndex];
+
+      var nextBox = boxesData[nextKey];
+
+
+
+      // Update active origin card
+
+      activeOriginCard = document.querySelector('.box-card[data-box-id="' + nextKey + '"]');
+
+      cards.forEach(function (c) {
+
+        if (c === activeOriginCard) c.classList.add('is-active');
+
+        else c.classList.remove('is-active');
+
+      });
+
+
+
+      modalStage.classList.remove('has-video');
+
+      modalStill.src = nextBox.still;
+
+      modalStill.alt = nextBox.name;
+
+
+
+      updateDetails(nextBox);
+
+      playBoxVideo(nextBox.clip);
+
+    }
+
+
+
+    modalClose.addEventListener('click', closeBoxModal);
+
+    modalBackdrop.addEventListener('click', closeBoxModal);
+
+    modalPrev.addEventListener('click', function () { navigateBox(-1); });
+
+    modalNext.addEventListener('click', function () { navigateBox(1); });
+
+
+
+    document.addEventListener('keydown', function (e) {
+
+      if (!modal.classList.contains('open')) return;
+
+      if (e.key === 'Escape') closeBoxModal();
+
+      if (e.key === 'ArrowLeft') navigateBox(-1);
+
+      if (e.key === 'ArrowRight') navigateBox(1);
+
+    });
+
+
+
+    window.addEventListener('popstate', function () {
+
+      if (modal.classList.contains('open')) {
+
+        closeBoxModal();
+
+      }
+
+    });
+
+  }
+
+
+
+  // ==========================================================================
+
+  // Data Loop Videos (Gift boxes, Mysore Pak, Namkeen)
+
+  // Autoplay when in viewport with intersection observer
+
+  // ==========================================================================
+
+  var loopElements = document.querySelectorAll('[data-loop]');
+
+  loopElements.forEach(function (container) {
+
+    var clipName = container.dataset.loop;
+
+    if (!clipName) return;
+
+
+
+    var video = document.createElement('video');
+
+    video.muted = true;
+
+    video.playsInline = true;
+
+    video.loop = true;
+
+    video.preload = 'metadata';
+
+    video.setAttribute('muted', '');
+
+    video.setAttribute('playsinline', '');
+
+    video.src = 'video/' + clipName + '-16x9.mp4';
+
+
+
+    video.addEventListener('loadeddata', function () {
+
+      container.classList.add('has-clip');
+
+    });
+
+
+
+    container.appendChild(video);
+
+
+
+    var observer = new IntersectionObserver(function (entries) {
+
+      entries.forEach(function (entry) {
+
+        if (entry.isIntersecting) {
+
+          video.play().catch(function () {});
+
+        } else {
+
+          video.pause();
+
+        }
+
+      });
+
+    }, { threshold: 0.15 });
+
+
+
+    observer.observe(container);
+
+  });
+
+
+
+  // Reveal animations on scroll
+
+  var revealObserver = new IntersectionObserver(function (entries) {
+
+    entries.forEach(function (entry) {
+
+      if (entry.isIntersecting) {
+
+        entry.target.classList.add('in');
+
+      }
+
+    });
+
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+
+
+  document.querySelectorAll('.rv').forEach(function (el) {
+
+    revealObserver.observe(el);
+
+  });
+
+
+
+  // ==========================================================================
+
+  // Main Animation Loop for Smooth Scrubbing & Scroll Tracking
+
+  // ==========================================================================
+
+  var progressBar = document.getElementById('progress');
+
+  var lastFrameTime = performance.now();
+
+
+
+  function onFrame(now) {
+
+    var dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+
+    lastFrameTime = now;
+
+
+
+    var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+    var winHeight = window.innerHeight;
+
+    var docHeight = document.documentElement.scrollHeight - winHeight;
+
+
+
+    // Progress bar at top
+
+    if (progressBar && docHeight > 0) {
+
+      progressBar.style.transform = 'scaleX(' + (scrollY / docHeight).toFixed(4) + ')';
+
+    }
+
+
+
+    // Hero scene scroll scrubbing
+
+    if (heroSec && heroFrame) {
+
+      var stage = heroSec.querySelector('.stage') || heroSec;
+
+      var run = heroSec.offsetHeight - stage.offsetHeight;
+
+      var rect = heroSec.getBoundingClientRect();
+
+      var p = run > 0 ? clamp(-rect.top / run, 0, 1) : 0;
+
+
+
+      // Scrub the hero video
+
+      if (heroClip && heroClip.ready) {
+
+        scrubHero(heroClip, clamp(p / 0.74, 0, 1));
+
+      } else if (heroStill) {
+
+        heroStill.style.transform = 'scale(' + (1.06 + p * 0.1) + ')';
+
+      }
+
+
+
+      // Fade hero copy lines
+
+      if (heroLines.length >= 2) {
+
+        var line1Opacity = 1 - norm(p, 0.26, 0.36);
+
+        var line2Opacity = norm(p, 0.42, 0.52) * (1 - norm(p, 0.74, 0.82));
+
+
+
+        heroLines[0].style.opacity = line1Opacity;
+
+        heroLines[0].style.transform = 'translateY(' + ((1 - line1Opacity) * -24).toFixed(1) + 'px)';
+
+        heroLines[0].style.visibility = line1Opacity < 0.02 ? 'hidden' : 'visible';
+
+
+
+        heroLines[1].style.opacity = line2Opacity;
+
+        heroLines[1].style.transform = 'translateY(' + ((1 - line2Opacity) * 24).toFixed(1) + 'px)';
+
+        heroLines[1].style.visibility = line2Opacity < 0.02 ? 'hidden' : 'visible';
+
+      }
+
+
+
+      // Fade scroll cue indicator
+
+      if (heroCue) {
+
+        heroCue.style.opacity = 1 - norm(p, 0, 0.06);
+
+      }
+
+
+
+      // Smooth card insetting transition into cream background at end of hero
+
+      var s = easeInOutCubic(norm(p, 0.80, 1.0));
+
+      var mob = isMobile();
+
+      if (s > 0) {
+
+        var vhInset = s * (mob ? 10 : 12);
+
+        var vwInset = s * (mob ? 4 : 6);
+
+        var radius = s * 28;
+
+        heroFrame.style.clipPath = 'inset(' + vhInset.toFixed(1) + 'vh ' + vwInset.toFixed(1) + 'vw ' + vhInset.toFixed(1) + 'vh round ' + radius.toFixed(1) + 'px)';
+
+      } else {
+
+        heroFrame.style.clipPath = 'none';
+
+      }
+
+
+
+      // Top bar style switch: stays dark/transparent while hero is active, switches to solid when framed on cream
+
+      var heroDark = s < 0.35;
+
+      if (topBar) {
+
+        topBar.classList.toggle('solid', !(rect && rect.bottom > 80 && heroDark));
+
+      }
+
+    }
+
+
+
+    // Story Cashew Parallax & Playback
+
+    var storySec = document.getElementById('story');
+
+    var storyVideo = document.getElementById('story-cashew-video');
+
+    if (storySec && storyVideo) {
+
+      var sRect = storySec.getBoundingClientRect();
+
+      if (sRect.bottom > 0 && sRect.top < winHeight) {
+
+        var sProgress = clamp((winHeight - sRect.top) / (winHeight + sRect.height), 0, 1);
+
+        var pY = (sProgress - 0.5) * 44;
+
+        storyVideo.style.transform = 'scale(1.06) translateY(' + pY.toFixed(1) + 'px)';
+
+        if (storyVideo.paused) {
+
+          storyVideo.play().catch(function () {});
+
+        }
+
+      } else {
+
+        if (!storyVideo.paused) {
+
+          storyVideo.pause();
+
+        }
+
+      }
+
+    }
+
+
+
+    requestAnimationFrame(onFrame);
+
+  }
+
+
+
+  requestAnimationFrame(onFrame);
+
+
+
+})();
+
