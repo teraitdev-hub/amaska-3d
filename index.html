@@ -366,8 +366,18 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
 @keyframes cueAnim { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 @media (max-width: 860px) {
+  .hero .frame {
+    background: #1c020d;
+  }
   .hero .frame::after {
-    background: linear-gradient(180deg, rgba(30,2,14,0.85) 0%, rgba(30,2,14,0.35) 45%, rgba(30,2,14,0.75) 100%);
+    background: linear-gradient(180deg, 
+      rgba(24,2,10,0.96) 0%, 
+      rgba(24,2,10,0.60) 18%, 
+      transparent 32%, 
+      transparent 68%, 
+      rgba(24,2,10,0.60) 82%, 
+      rgba(24,2,10,0.96) 100%
+    );
   }
   .hero .hero-headline-wrap {
     left: 20px;
@@ -375,7 +385,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     top: calc(84px + env(safe-area-inset-top, 0px));
   }
   .hero h1 {
-    font-size: clamp(1.5rem, 6.5vw, 2.2rem);
+    font-size: clamp(1.4rem, 6vw, 2.1rem);
     white-space: normal;
   }
   .hero .acts {
@@ -399,8 +409,10 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center 60%;
+    object-fit: contain;
+    object-position: center 53%;
+    transform: scale(1.35);
+    transform-origin: center 53%;
   }
 }
 
@@ -3691,6 +3703,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=23"></script>
+<script src="js/clean.js?v=24"></script>
 </body>
 </html>
