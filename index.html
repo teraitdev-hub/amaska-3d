@@ -994,12 +994,12 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     height: auto;
     min-height: 0;
     max-height: none;
-    padding: clamp(20px, 3.5vh, 28px) 16px clamp(44px, 6vh, 64px) 16px;
+    padding: clamp(20px, 3vh, 26px) 16px clamp(40px, 5vh, 56px) 16px;
     justify-content: flex-start;
     gap: 0;
   }
   .sweets-coverflow .coverflow-head {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .sweets-coverflow .coverflow-head .label {
     font-size: 0.68rem;
@@ -1010,16 +1010,24 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     font-size: 1.80rem;
     line-height: 1.15;
   }
+  /* Taller 1:1 Stage on Mobile: Fills vertical screen gracefully */
   .sweets-coverflow .coverflow-stage {
-    height: 250px;
-    min-height: 230px;
-    max-height: 260px;
-    margin: 2px 0 6px 0;
+    height: clamp(310px, 42vh, 350px);
+    min-height: 300px;
+    max-height: 360px;
+    margin: 4px 0 8px 0;
   }
+  /* Square 1:1 Card: Plate becomes ~80% larger and taller on mobile */
   .sweets-coverflow .coverflow-card {
-    width: min(320px, 86vw);
-    margin-top: calc(-1 * min(320px, 86vw) * 9 / 32);
-    margin-left: calc(-1 * min(320px, 86vw) / 2);
+    width: min(300px, 82vw);
+    aspect-ratio: 1 / 1;
+    margin-top: calc(-1 * min(300px, 82vw) / 2);
+    margin-left: calc(-1 * min(300px, 82vw) / 2);
+  }
+  .sweets-coverflow .coverflow-video,
+  .sweets-coverflow .coverflow-poster {
+    object-fit: cover;
+    object-position: center center;
   }
   .sweets-coverflow .coverflow-arrow {
     width: 38px;
@@ -1028,7 +1036,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   .sweets-coverflow .coverflow-arrow-prev { left: 4px; }
   .sweets-coverflow .coverflow-arrow-next { right: 4px; }
   .sweets-coverflow .coverflow-info {
-    margin: 4px 0 10px 0;
+    margin: 6px 0 10px 0;
     padding: 0;
     min-height: 44px;
     gap: 3px;
@@ -3739,6 +3747,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=25"></script>
+<script src="js/clean.js?v=26"></script>
 </body>
 </html>
