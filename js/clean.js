@@ -448,8 +448,11 @@
       video.defaultMuted = true;
       video.loop = true;
       video.playsInline = true;
+      video.autoplay = true;
       video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
       video.setAttribute('muted', '');
+      video.setAttribute('autoplay', '');
       video.preload = (i === 0) ? 'auto' : 'none';
       video.src = sweet.video;
 
@@ -549,17 +552,25 @@
           var absDiff = Math.abs(diff);
 
           if (isMobileView) {
-            // Mobile: center large, peek neighbours at ±1
+            // Mobile: center large, peek neighbours at ±1, smooth continuous glide for ±2
             if (absDiff === 1) {
-              var mX = diff > 0 ? 68 : -68;
-              var mRot = diff > 0 ? -20 : 20;
-              card.style.transform = 'translate3d(' + mX + '%, 0, -120px) scale(0.65) rotateY(' + mRot + 'deg)';
-              card.style.opacity = '0.30';
+              var mX = diff > 0 ? 66 : -66;
+              var mRot = diff > 0 ? -18 : 18;
+              card.style.transform = 'translate3d(' + mX + '%, 0, -100px) scale(0.68) rotateY(' + mRot + 'deg)';
+              card.style.opacity = '0.38';
               card.style.zIndex = '6';
               card.style.pointerEvents = 'auto';
               card.style.visibility = 'visible';
+            } else if (absDiff === 2) {
+              var mX2 = diff > 0 ? 115 : -115;
+              var mRot2 = diff > 0 ? -30 : 30;
+              card.style.transform = 'translate3d(' + mX2 + '%, 0, -220px) scale(0.44) rotateY(' + mRot2 + 'deg)';
+              card.style.opacity = '0';
+              card.style.zIndex = '2';
+              card.style.pointerEvents = 'none';
+              card.style.visibility = 'visible';
             } else {
-              card.style.transform = 'translate3d(' + (diff > 0 ? 110 : -110) + '%, 0, -300px) scale(0.4) rotateY(' + (diff > 0 ? -35 : 35) + 'deg)';
+              card.style.transform = 'translate3d(' + (diff > 0 ? 140 : -140) + '%, 0, -320px) scale(0.35) rotateY(' + (diff > 0 ? -35 : 35) + 'deg)';
               card.style.opacity = '0';
               card.style.zIndex = '1';
               card.style.pointerEvents = 'none';

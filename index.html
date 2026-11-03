@@ -721,6 +721,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   display: flex;
   align-items: center;
   justify-content: center;
+  mix-blend-mode: multiply; /* Multiplies all cards cleanly onto warm cream background */
 }
 
 /* Coverflow Card Item */
@@ -753,8 +754,6 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   display: flex;
   align-items: center;
   justify-content: center;
-  -webkit-mask-image: radial-gradient(ellipse 65% 88% at 50% 50%, black 60%, rgba(0,0,0,0.85) 75%, transparent 98%);
-  mask-image: radial-gradient(ellipse 65% 88% at 50% 50%, black 60%, rgba(0,0,0,0.85) 75%, transparent 98%);
 }
 
 /* Soft contact shadow under the rotating plate */
@@ -993,19 +992,34 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     --sweets-light-opacity: 0.25;
     --sweets-light-blur: 0px;
     height: auto;
-    min-height: calc(100vh - 74px);
+    min-height: 0;
     max-height: none;
-    padding: 12px 10px 16px 10px;
-    justify-content: space-evenly;
+    padding: clamp(20px, 3.5vh, 28px) 16px clamp(44px, 6vh, 64px) 16px;
+    justify-content: flex-start;
+    gap: 0;
+  }
+  .sweets-coverflow .coverflow-head {
+    margin-bottom: 8px;
+  }
+  .sweets-coverflow .coverflow-head .label {
+    font-size: 0.68rem;
+    letter-spacing: 0.20em;
+    margin-bottom: 2px;
+  }
+  .sweets-coverflow .coverflow-head h2 {
+    font-size: 1.80rem;
+    line-height: 1.15;
   }
   .sweets-coverflow .coverflow-stage {
     height: 250px;
     min-height: 230px;
+    max-height: 260px;
+    margin: 2px 0 6px 0;
   }
   .sweets-coverflow .coverflow-card {
-    width: min(320px, 84vw);
-    margin-top: calc(-1 * min(320px, 84vw) * 9 / 32);
-    margin-left: calc(-1 * min(320px, 84vw) / 2);
+    width: min(320px, 86vw);
+    margin-top: calc(-1 * min(320px, 86vw) * 9 / 32);
+    margin-left: calc(-1 * min(320px, 86vw) / 2);
   }
   .sweets-coverflow .coverflow-arrow {
     width: 38px;
@@ -1013,14 +1027,36 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   }
   .sweets-coverflow .coverflow-arrow-prev { left: 4px; }
   .sweets-coverflow .coverflow-arrow-next { right: 4px; }
+  .sweets-coverflow .coverflow-info {
+    margin: 4px 0 10px 0;
+    padding: 0;
+    min-height: 44px;
+    gap: 3px;
+  }
+  .sweets-coverflow .coverflow-title {
+    font-size: 1.55rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .sweets-coverflow .coverflow-price {
+    font-size: 1.10rem;
+    font-weight: 700;
+  }
   .sweets-coverflow .coverflow-dots {
-    gap: 5px;
-    padding-right: calc(60px + env(safe-area-inset-right, 0px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    max-width: 320px;
   }
   .sweets-coverflow .coverflow-dot {
     width: 26px;
     height: 26px;
     font-size: 0.65rem;
+    font-weight: 700;
   }
 }
 
@@ -3703,6 +3739,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=24"></script>
+<script src="js/clean.js?v=25"></script>
 </body>
 </html>
