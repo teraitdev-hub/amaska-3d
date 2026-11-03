@@ -1982,8 +1982,8 @@
         id: 'chaat',
         title: 'Special Chaat',
         caption: 'Crisp puri filled with spiced mint water & potato filling',
-        video: 'assets/cafe/Green_water_pouring_on_puri_7ad784e6.mp4',
-        poster: 'assets/cafe/poster-chaat.webp',
+        video: 'assets/Cafe/Green_water_pouring_on_puri_7ad784e6.mp4',
+        poster: 'assets/Cafe/poster-chaat.webp',
         ringText: 'SPECIAL CHAAT • CRISP & LIVE • PURE VEGETARIAN • SPECIAL CHAAT • CRISP & LIVE • PURE VEGETARIAN • ',
         items: [
           { name: 'Paani Puri (6 pcs)', price: '₹65' },
@@ -2001,8 +2001,8 @@
         id: 'snacks',
         title: 'Snacks & Savouries',
         caption: 'Crisp golden crusts with spiced fragrant fillings',
-        video: 'assets/cafe/Chutney_drizzling_over_samosa_41d23478.mp4',
-        poster: 'assets/cafe/poster-snacks.webp',
+        video: 'assets/Cafe/Chutney_drizzling_over_samosa_41d23478.mp4',
+        poster: 'assets/Cafe/poster-snacks.webp',
         ringText: 'SNACKS & SAVOURIES • FRESH & LIVE • PURE VEGETARIAN • SNACKS & SAVOURIES • FRESH & LIVE • ',
         items: [
           { name: 'Samosa', price: '₹35', unit: 'per pc' },
@@ -2018,8 +2018,8 @@
         id: 'special',
         title: 'Amaska Special',
         caption: 'Fluffy kulcha served with slow-simmered Amritsari chole',
-        video: 'assets/cafe/Butter_pouring_on_hot_kulcha_53425cdf.mp4',
-        poster: 'assets/cafe/poster-special.webp',
+        video: 'assets/Cafe/Butter_pouring_on_hot_kulcha_53425cdf.mp4',
+        poster: 'assets/Cafe/poster-special.webp',
         ringText: 'AMASKA SPECIAL • CRISP & LIVE • PURE VEGETARIAN • AMASKA SPECIAL • CRISP & LIVE • PURE VEG • ',
         items: [
           { name: 'Aloo Tikki with Dahi', price: '₹120' },
