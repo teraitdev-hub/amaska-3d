@@ -2060,11 +2060,14 @@
         html += '<li class="cafe-item-row" style="animation-delay: ' + delay + 's;">';
         html += '<span class="item-name">' + item.name + '</span>';
         html += '<span class="item-leader" aria-hidden="true"></span>';
-        html += '<span class="item-price">' + item.price;
+        html += '<div class="item-price-wrap">';
+        html += '<span class="item-price-val">' + item.price + '</span>';
         if (item.unit) {
-          html += ' <span class="item-unit">' + item.unit + '</span>';
+          html += '<span class="item-unit">' + item.unit + '</span>';
+        } else {
+          html += '<span class="item-unit item-unit-empty" aria-hidden="true"></span>';
         }
-        html += '</span></li>';
+        html += '</div></li>';
       });
       menuListEl.innerHTML = html;
     }

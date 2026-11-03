@@ -2375,18 +2375,42 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   transform: translateY(-4px);
 }
 
-#menu.cafe-orbit .item-price {
+#menu.cafe-orbit .item-price-wrap {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+#menu.cafe-orbit .item-price,
+#menu.cafe-orbit .item-price-val {
   flex: 0 0 auto;
   white-space: nowrap;
   font: 700 18px var(--label);
   color: var(--cafe-berry);
+  min-width: 48px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 #menu.cafe-orbit .item-unit {
   font-size: 0.76em;
   font-weight: 500;
   color: var(--cafe-soft);
-  margin-left: 4px;
+  margin-left: 6px;
+  min-width: 64px;
+  width: 64px;
+  text-align: left;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+#menu.cafe-orbit .item-unit.item-unit-empty {
+  min-width: 64px;
+  width: 64px;
+  display: inline-block;
 }
 
 /* Bottom Controls Bar: 96px free space at bottom right for WhatsApp button */
@@ -2517,7 +2541,8 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     min-height: 38px;
   }
   #menu.cafe-orbit .item-name,
-  #menu.cafe-orbit .item-price {
+  #menu.cafe-orbit .item-price,
+  #menu.cafe-orbit .item-price-val {
     font-size: 16px;
   }
   #menu.cafe-orbit .cafe-active-title {
@@ -2541,7 +2566,8 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     min-height: 40px;
   }
   #menu.cafe-orbit .item-name,
-  #menu.cafe-orbit .item-price {
+  #menu.cafe-orbit .item-price,
+  #menu.cafe-orbit .item-price-val {
     font-size: 16px;
   }
   #menu.cafe-orbit .cafe-tab-btn {
@@ -2556,12 +2582,13 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     height: auto;
     max-height: none;
     min-height: 0;
-    padding: 40px 0 60px 0;
-    --cafe-system-size: clamp(320px, 86vw, 450px);
+    padding: clamp(24px, 3.5vh, 34px) 0 clamp(40px, 5vh, 54px) 0;
+    --cafe-system-size: clamp(270px, 78vw, 360px);
   }
   #menu.cafe-orbit .cafe-container {
     height: auto;
-    gap: 24px;
+    gap: clamp(12px, 2vh, 18px);
+    padding-inline: 14px;
   }
   #menu.cafe-orbit .cafe-head .cafe-title,
   #menu.cafe-orbit .cafe-head .cafe-lede {
@@ -2570,32 +2597,86 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   #menu.cafe-orbit .cafe-two-col {
     grid-template-columns: 1fr;
     height: auto;
-    gap: 28px;
+    gap: clamp(12px, 2vh, 18px);
   }
   #menu.cafe-orbit .cafe-col-circle {
     height: auto;
   }
   #menu.cafe-orbit .cafe-col-menu {
     height: auto;
+    background: rgba(253, 249, 244, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(123, 0, 60, 0.08);
+    border-radius: 14px;
+    padding: 14px 12px 16px 12px;
+    box-shadow: 0 4px 16px rgba(62, 0, 32, 0.04);
   }
   #menu.cafe-orbit .cafe-menu-header {
     text-align: center;
+    margin-bottom: 6px;
+  }
+  #menu.cafe-orbit .cafe-active-title {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+  #menu.cafe-orbit .cafe-active-caption {
+    font-size: 13px;
   }
   #menu.cafe-orbit .cafe-item-row {
-    height: 42px;
-    min-height: 42px;
+    height: 39px;
+    min-height: 39px;
+    padding: 0 4px;
   }
-  #menu.cafe-orbit .item-name,
-  #menu.cafe-orbit .item-price {
-    font-size: 16px;
+  #menu.cafe-orbit .item-name {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #220010;
+  }
+  #menu.cafe-orbit .item-price,
+  #menu.cafe-orbit .item-price-val {
+    font-size: 15.5px;
+    font-weight: 800;
+    min-width: 44px;
+  }
+  #menu.cafe-orbit .item-unit {
+    font-size: 11.5px;
+    color: #523844;
+    min-width: 56px;
+    width: 56px;
+    margin-left: 4px;
+  }
+  #menu.cafe-orbit .item-unit.item-unit-empty {
+    min-width: 56px;
+    width: 56px;
   }
   #menu.cafe-orbit .cafe-bottom-bar {
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
     padding-right: 0;
   }
   #menu.cafe-orbit .cafe-tabs {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 5px;
+    width: 100%;
+    max-width: 360px;
+  }
+  #menu.cafe-orbit .cafe-tab-btn {
+    padding: 7px 11px;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    flex: 1 1 auto;
+    text-align: center;
+    white-space: nowrap;
+  }
+  #menu.cafe-orbit .cafe-nav-controls {
+    gap: 14px;
   }
 }
 
@@ -3747,6 +3828,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=26"></script>
+<script src="js/clean.js?v=27"></script>
 </body>
 </html>
