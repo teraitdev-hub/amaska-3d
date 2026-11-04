@@ -455,6 +455,17 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     object-position: center;
     transform: none;
   }
+
+  /* Scale cashew video on mobile so nuts appear smaller, realistic, and delicate */
+  .story-bg-video {
+    top: auto;
+    bottom: 0;
+    height: 60%;
+    object-fit: cover;
+    object-position: center bottom;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+  }
 }
 
 /* ==========================================================================
