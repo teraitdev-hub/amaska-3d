@@ -105,10 +105,17 @@
     heroVideo.preload = 'auto';
     heroVideo.setAttribute('muted', '');
     heroVideo.setAttribute('playsinline', '');
+    heroVideo.setAttribute('webkit-playsinline', '');
     heroVideo.src = currentHeroTarget;
     heroFrame.insertBefore(heroVideo, heroFrame.firstChild);
   } else if (heroVideo) {
+    heroVideo.muted = true;
+    heroVideo.playsInline = true;
+    heroVideo.setAttribute('muted', '');
+    heroVideo.setAttribute('playsinline', '');
+    heroVideo.setAttribute('webkit-playsinline', '');
     heroVideo.src = currentHeroTarget;
+    heroVideo.load();
   }
 
   var heroClip = {
@@ -119,7 +126,6 @@
   };
 
   function setHeroReady() {
-    if (heroClip.ready) return;
     heroClip.ready = true;
     if (heroVideo && heroVideo.duration && !isNaN(heroVideo.duration) && heroVideo.duration > 1) {
       heroClip.duration = heroVideo.duration;
@@ -131,8 +137,11 @@
   function loadHeroVideo(path) {
     if (!heroVideo) return;
     currentHeroTarget = path;
-    heroClip.ready = false;
-    heroVideo.src = path;
+    if (heroVideo.getAttribute('src') !== path && heroVideo.src.indexOf(path) === -1) {
+      heroClip.ready = false;
+      heroVideo.src = path;
+      heroVideo.load();
+    }
 
     try {
       var primePlay = heroVideo.play();
@@ -150,25 +159,6 @@
     } catch (_) {
       setHeroReady();
     }
-
-    try {
-      fetch(path)
-        .then(function (res) { return res.blob(); })
-        .then(function (blob) {
-          if (!blob || blob.size < 1000) return;
-          if (currentHeroTarget !== path) return;
-          var blobUrl = URL.createObjectURL(blob);
-          var curT = heroVideo.currentTime || 0;
-          heroVideo.src = blobUrl;
-          try {
-            if (heroVideo.readyState >= 1) {
-              heroVideo.currentTime = curT;
-            }
-          } catch (_) {}
-          setHeroReady();
-        })
-        .catch(function () {});
-    } catch (_) {}
   }
 
   if (heroVideo) {
@@ -193,28 +183,18 @@
   }
 
   function scrubHero(c, p) {
-
     if (!c || !c.v) return;
-
     var dur = (c.v.duration && !isNaN(c.v.duration) && c.v.duration > 1) ? c.v.duration : c.duration;
-
     var target = clamp(p, 0, 1) * (dur - 0.05);
-
     c.t = (c.t == null) ? target : c.t + (target - c.t) * 0.25;
-
-    if (!c.v.seeking && Math.abs(c.v.currentTime - c.t) > 0.02) {
-
+    if (Math.abs(c.v.currentTime - c.t) > 0.02) {
       try {
         if (c.v.readyState >= 1) {
           c.v.currentTime = c.t;
         }
       } catch (_) {}
-
     }
-
   }
-
-
 
   // ==========================================================================
 
