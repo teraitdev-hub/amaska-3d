@@ -367,21 +367,47 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
 @keyframes cueAnim { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 @media (max-width: 860px) {
-  /* Mobile Header: unified solid cream styling matching second page */
+  /* Mobile Header: unified solid cream styling with royal gold lace pattern */
   .top {
-    background: rgba(250, 245, 239, 0.96) !important;
+    background-color: rgba(250, 245, 239, 0.96) !important;
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
     padding-block: 10px !important;
     box-shadow: 0 4px 20px rgba(62,0,32,0.10) !important;
     border-bottom: 1px solid rgba(123, 0, 60, 0.08) !important;
+    position: fixed;
+  }
+  .top::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('assets/header-gold-lace.webp') repeat-x center / auto 34px;
+    opacity: 0.14;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .top::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15px;
+    background: url('assets/header-gold-lace.webp') repeat-x center bottom / auto 15px;
+    opacity: 0.95;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .top .wrap {
+    position: relative;
+    z-index: 2;
   }
   .top .brand .on-dark { display: none !important; }
   .top .brand .on-light { display: block !important; }
   .top .menu-toggle {
     color: var(--ink) !important;
     border-color: rgba(123, 0, 60, 0.25) !important;
-    background: rgba(255, 255, 255, 0.6) !important;
+    background: rgba(255, 255, 255, 0.7) !important;
   }
 
   .cine.hero {
@@ -3275,6 +3301,9 @@ footer.site-footer.is-revealed .footer-bottom {
 
 /* Responsive: Tablet (2 columns: stacks neatly if below 860px) */
 @media (max-width: 860px) {
+  footer.site-footer {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  }
   footer.site-footer .footer-grid {
     flex-direction: column;
     align-items: center;
@@ -3335,7 +3364,7 @@ footer.site-footer.is-revealed .footer-bottom {
 @media (max-width: 600px) {
   footer.site-footer {
     padding-top: 26px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   }
   footer.site-footer .footer-grid {
     flex-direction: column;
@@ -3481,7 +3510,6 @@ footer.site-footer.is-revealed .footer-bottom {
       <div class="copy">
         <div class="line">
           <div class="hero-headline-wrap">
-            <span class="label">Sarjapur Road · Bengaluru</span>
             <h1>Each sweet and savoury is <em>a memory made tangible.</em></h1>
           </div>
           <div class="acts">
@@ -4006,6 +4034,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=39"></script>
+<script src="js/clean.js?v=40"></script>
 </body>
 </html>
