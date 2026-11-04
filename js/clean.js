@@ -83,170 +83,114 @@
   // ==========================================================================
 
   // HERO: Pinned Scroll-Scrubbed Box Opening Animation
-
-  // Matches exact recording from user (video/hero-16x9.mp4)
-
+  // Responsive: video/hero-16x9.mp4 (Desktop) / video/hero-9x16.mp4 (Mobile)
   // ==========================================================================
-
   var heroSec = document.querySelector('[data-scene="hero"]');
-
   var heroFrame = heroSec ? heroSec.querySelector('#hero-frame') : null;
-
   var heroLines = heroSec ? heroSec.querySelectorAll('.line') : [];
-
   var heroCue = heroSec ? heroSec.querySelector('.cue') : null;
-
   var heroStill = heroFrame ? heroFrame.querySelector('.still') : null;
-
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
+  function getHeroVideoPath() {
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4' : 'video/hero-16x9.mp4';
+  }
 
+  var currentHeroTarget = getHeroVideoPath();
 
   if (!heroVideo && heroFrame) {
-
     heroVideo = document.createElement('video');
-
     heroVideo.muted = true;
-
     heroVideo.playsInline = true;
-
     heroVideo.preload = 'auto';
-
     heroVideo.setAttribute('muted', '');
-
     heroVideo.setAttribute('playsinline', '');
-
-    heroVideo.src = 'video/hero-16x9.mp4';
-
+    heroVideo.src = currentHeroTarget;
     heroFrame.insertBefore(heroVideo, heroFrame.firstChild);
-
+  } else if (heroVideo) {
+    heroVideo.src = currentHeroTarget;
   }
-
-
 
   var heroClip = {
-
     v: heroVideo,
-
     ready: false,
-
     t: null,
-
     duration: 9.958
-
   };
 
-
-
   function setHeroReady() {
-
     if (heroClip.ready) return;
-
     heroClip.ready = true;
-
     if (heroVideo && heroVideo.duration && !isNaN(heroVideo.duration) && heroVideo.duration > 1) {
-
       heroClip.duration = heroVideo.duration;
-
     }
-
     if (heroSec) heroSec.classList.add('has-clip');
-
     if (heroFrame) heroFrame.classList.add('has-clip');
-
   }
 
-
-
-  if (heroVideo) {
-
-    heroVideo.addEventListener('loadedmetadata', setHeroReady);
-
-    heroVideo.addEventListener('loadeddata', setHeroReady);
-
-    heroVideo.addEventListener('canplay', setHeroReady);
-
-    heroVideo.addEventListener('canplaythrough', setHeroReady);
-
-    heroVideo.addEventListener('timeupdate', setHeroReady);
-
-    if (heroVideo.readyState >= 1) {
-
-      setHeroReady();
-
-    }
-
-    // Prime the video decoder with muted play and pause
+  function loadHeroVideo(path) {
+    if (!heroVideo) return;
+    currentHeroTarget = path;
+    heroClip.ready = false;
+    heroVideo.src = path;
 
     try {
-
       var primePlay = heroVideo.play();
-
       if (primePlay && primePlay.then) {
-
         primePlay.then(function () {
-
           heroVideo.pause();
-
           heroVideo.currentTime = 0;
-
           setHeroReady();
-
         }).catch(function () {
-
           setHeroReady();
-
         });
-
       } else {
-
         setHeroReady();
-
       }
-
     } catch (_) {
-
       setHeroReady();
-
     }
 
-
-
-    // Pre-fetch video as a Blob for 100% in-memory 60fps instant scrubbing
-
     try {
-
-      fetch('video/hero-16x9.mp4')
-
+      fetch(path)
         .then(function (res) { return res.blob(); })
-
         .then(function (blob) {
-
           if (!blob || blob.size < 1000) return;
-
+          if (currentHeroTarget !== path) return;
           var blobUrl = URL.createObjectURL(blob);
-
           var curT = heroVideo.currentTime || 0;
-
           heroVideo.src = blobUrl;
-
           try {
             if (heroVideo.readyState >= 1) {
               heroVideo.currentTime = curT;
             }
           } catch (_) {}
-
           setHeroReady();
-
         })
-
         .catch(function () {});
-
     } catch (_) {}
-
   }
 
+  if (heroVideo) {
+    heroVideo.addEventListener('loadedmetadata', setHeroReady);
+    heroVideo.addEventListener('loadeddata', setHeroReady);
+    heroVideo.addEventListener('canplay', setHeroReady);
+    heroVideo.addEventListener('canplaythrough', setHeroReady);
+    heroVideo.addEventListener('timeupdate', setHeroReady);
+    if (heroVideo.readyState >= 1) {
+      setHeroReady();
+    }
+    loadHeroVideo(currentHeroTarget);
 
+    var lastIsMobileHero = window.innerWidth <= 860;
+    window.addEventListener('resize', debounce(function () {
+      var nowIsMob = window.innerWidth <= 860;
+      if (nowIsMob !== lastIsMobileHero) {
+        lastIsMobileHero = nowIsMob;
+        loadHeroVideo(getHeroVideoPath());
+      }
+    }, 200), { passive: true });
+  }
 
   function scrubHero(c, p) {
 

@@ -223,7 +223,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   background: #3a0a1c;
   will-change: clip-path;
 }
-.hero .frame video, .hero .frame .still {
+.hero .frame video, .hero .frame .still, .hero .frame picture.still, .hero .frame picture.still img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -231,10 +231,11 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   object-fit: cover;
   object-position: center;
 }
-.hero .frame .still { transform: scale(1.04); }
+.hero .frame .still, .hero .frame picture.still { transform: scale(1.04); }
 .hero .frame video { opacity: 0; transition: opacity .6s; z-index: 1; }
 .hero.has-clip .frame video, .hero .frame.has-clip video { opacity: 1; }
-.hero.has-clip .frame .still, .hero .frame.has-clip .still { opacity: 0; pointer-events: none; }
+.hero.has-clip .frame .still, .hero .frame.has-clip .still,
+.hero.has-clip .frame picture.still, .hero .frame.has-clip picture.still { opacity: 0; pointer-events: none; }
 
 /* Subtle dark gradient overlay so text is crisp on any frame */
 .hero .frame::after {
@@ -371,48 +372,85 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   }
   .hero .frame::after {
     background: linear-gradient(180deg, 
-      rgba(24,2,10,0.96) 0%, 
-      rgba(24,2,10,0.60) 18%, 
-      transparent 32%, 
-      transparent 68%, 
-      rgba(24,2,10,0.60) 82%, 
-      rgba(24,2,10,0.96) 100%
+      rgba(24,2,10,0.78) 0%, 
+      rgba(24,2,10,0.22) 22%, 
+      transparent 36%, 
+      transparent 64%, 
+      rgba(24,2,10,0.25) 78%, 
+      rgba(24,2,10,0.88) 100%
     );
   }
   .hero .hero-headline-wrap {
     left: 20px;
     right: 20px;
-    top: calc(84px + env(safe-area-inset-top, 0px));
+    top: calc(72px + env(safe-area-inset-top, 0px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .hero .hero-headline-wrap .label {
+    text-align: center;
   }
   .hero h1 {
-    font-size: clamp(1.4rem, 6vw, 2.1rem);
+    font-size: clamp(1.45rem, 6.2vw, 2.05rem);
     white-space: normal;
+    text-align: center;
+    line-height: 1.22;
   }
   .hero .acts {
     left: 20px;
-    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-    gap: 10px;
+    right: 20px;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero .acts .btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    font-size: 0.84rem;
+    letter-spacing: 0.16em;
+    justify-content: center;
+    text-align: center;
+  }
+  .cue {
+    left: 50%;
+    translate: -50% 0;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
   .hero .line + .line {
     left: 20px;
     right: 20px;
     width: auto;
-    top: calc(84px + env(safe-area-inset-top, 0px));
+    top: calc(72px + env(safe-area-inset-top, 0px));
     translate: none;
+    text-align: center;
   }
   .hero h2 {
-    font-size: clamp(1.8rem, 7vw, 2.5rem);
+    font-size: clamp(1.75rem, 6.8vw, 2.4rem);
+    text-align: center;
   }
-  .hero .lede { font-size: .98rem; }
-  .hero .frame video, .hero .frame .still {
+  .hero .line + .line .label {
+    text-align: center;
+  }
+  .hero .lede { 
+    font-size: .95rem; 
+    text-align: center; 
+    margin: 10px auto 0 auto; 
+    max-width: 380px; 
+  }
+  .hero .frame video, .hero .frame .still, .hero .frame picture.still, .hero .frame picture.still img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center 53%;
-    transform: scale(1.35);
-    transform-origin: center 53%;
+    object-fit: cover;
+    object-position: center;
+    transform: none;
   }
 }
 
@@ -3304,7 +3342,10 @@ footer.site-footer.is-revealed .footer-bottom {
     <div class="stage">
       <div class="frame" id="hero-frame">
         <video id="hero-video" class="hero-video-el" src="video/hero-16x9.mp4" muted playsinline preload="auto"></video>
-        <img class="still" src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
+        <picture class="still">
+          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp">
+          <img src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
+        </picture>
       </div>
       <div class="copy">
         <div class="line">
@@ -3832,6 +3873,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=29"></script>
+<script src="js/clean.js?v=30"></script>
 </body>
 </html>
