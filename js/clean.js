@@ -101,7 +101,7 @@
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
   function getHeroVideoPath() {
-    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=4' : 'video/hero-16x9.mp4';
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=5' : 'video/hero-16x9.mp4';
   }
 
   var currentHeroTarget = getHeroVideoPath();
@@ -1587,7 +1587,7 @@
 
       // Top bar style switch: stays dark/transparent while hero is active, switches to solid when framed on cream
 
-      var heroDark = s < 0.35;
+      var heroDark = s < 0.98;
 
       if (topBar) {
 
