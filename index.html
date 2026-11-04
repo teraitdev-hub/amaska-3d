@@ -1991,8 +1991,9 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   height: calc(100vh - 74px);
   min-height: 620px;
   max-height: calc(100vh - 74px);
-  padding: clamp(12px, 1.8vh, 22px) 0 clamp(10px, 1.6vh, 18px) 0;
-  padding-block: 0 !important;
+  padding-top: clamp(22px, 3vh, 32px);
+  padding-bottom: clamp(14px, 2vh, 20px);
+  padding-inline: 0;
   background: radial-gradient(circle 950px at 28% 46%, var(--cafe-bg-cream-light) 0%, var(--cafe-bg-cream) 52%, var(--cafe-bg-cream-warm) 100%);
   scroll-margin-top: 74px;
   box-sizing: border-box;
@@ -2067,7 +2068,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   position: relative;
   z-index: 20;
   flex-shrink: 0;
-  margin: 0;
+  margin: 0 0 clamp(6px, 1vh, 12px) 0;
   width: 100%;
 }
 
@@ -2582,8 +2583,11 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     height: auto;
     max-height: none;
     min-height: 0;
-    padding: clamp(24px, 3.5vh, 34px) 0 clamp(40px, 5vh, 54px) 0;
+    padding: clamp(34px, 5vh, 46px) 0 clamp(40px, 5vh, 54px) 0;
     --cafe-system-size: clamp(270px, 78vw, 360px);
+  }
+  #menu.cafe-orbit .cafe-head {
+    margin: 0 0 clamp(10px, 1.8vh, 16px) 0;
   }
   #menu.cafe-orbit .cafe-container {
     height: auto;
@@ -3828,6 +3832,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=27"></script>
+<script src="js/clean.js?v=28"></script>
 </body>
 </html>
