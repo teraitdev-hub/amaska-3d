@@ -367,6 +367,23 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
 @keyframes cueAnim { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 @media (max-width: 860px) {
+  /* Mobile Header: unified solid cream styling matching second page */
+  .top {
+    background: rgba(250, 245, 239, 0.96) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    padding-block: 10px !important;
+    box-shadow: 0 4px 20px rgba(62,0,32,0.10) !important;
+    border-bottom: 1px solid rgba(123, 0, 60, 0.08) !important;
+  }
+  .top .brand .on-dark { display: none !important; }
+  .top .brand .on-light { display: block !important; }
+  .top .menu-toggle {
+    color: var(--ink) !important;
+    border-color: rgba(123, 0, 60, 0.25) !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+  }
+
   .cine.hero {
     --len: 2.2;
   }
@@ -453,44 +470,47 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 38%;
     transform: none;
   }
 
-  /* Scale cashew video on mobile so nuts appear truly small, delicate, and realistic */
+  /* Cashew video scaled on mobile so nuts appear truly small, delicate, and realistic */
   .story-bg-video {
     top: auto;
     bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 42%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.60);
+    transform-origin: center bottom;
+    width: 140%;
+    max-width: 580px;
+    height: auto;
     object-fit: contain;
     object-position: center bottom;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 18%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%);
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 82%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 82%, transparent 100%);
   }
 
-  /* Section 2 "Our Story" mobile typography: refined headline size & highlighted badge */
+  /* Section 2 "Our Story" mobile typography */
   .story-card h2 {
-    font-size: clamp(1.55rem, 5.2vw, 1.95rem);
-    line-height: 1.2;
+    font-size: clamp(1.38rem, 4.8vw, 1.68rem);
+    line-height: 1.22;
   }
   .story-card .label {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #8c1040;
-    background: rgba(140, 16, 64, 0.08);
-    border: 1px solid rgba(140, 16, 64, 0.22);
-    padding: 6px 14px;
+    font: 800 clamp(0.92rem, 3.2vw, 1.05rem) var(--label);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7B003C;
+    background: rgba(123, 0, 60, 0.09);
+    border: 1.5px solid rgba(123, 0, 60, 0.28);
+    padding: 8px 18px;
     border-radius: 999px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    font-size: 0.72rem;
     width: fit-content;
-    box-shadow: 0 2px 10px rgba(140, 16, 64, 0.06);
-    margin-bottom: 4px;
+    box-shadow: 0 2px 12px rgba(123, 0, 60, 0.08);
+    margin-bottom: 12px;
   }
 }
 
@@ -503,11 +523,23 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   background: #E8DDC4; /* Matches exact video background color */
   overflow: hidden;
   min-height: clamp(680px, 92vh, 960px);
-  padding-top: clamp(80px, 9vw, 120px);
-  padding-bottom: clamp(140px, 16vh, 220px); /* Leaves clear breathing space for the landed cashews at the bottom */
+  padding-top: clamp(130px, 15vw, 190px); /* Moved down with generous breathing room */
+  padding-bottom: clamp(150px, 18vh, 230px);
   display: flex;
   align-items: flex-start;
   border-bottom: none;
+}
+
+/* Smooth blend from Cashew Canvas to Sweets Coverflow (eliminates harsh bottom edge) */
+.story-bottom-blend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(232, 221, 196, 0) 0%, rgba(232, 221, 196, 0.8) 55%, var(--cream) 100%);
+  pointer-events: none;
+  z-index: 4;
 }
 
 /* Smooth blend from Hero paper to Cashew Canvas */
@@ -564,10 +596,26 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   display: grid;
   gap: 22px;
 }
+.story-card .label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 800 clamp(0.95rem, 1.4vw, 1.12rem) var(--label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #7B003C;
+  background: rgba(123, 0, 60, 0.08);
+  border: 1.5px solid rgba(123, 0, 60, 0.25);
+  padding: 8px 20px;
+  border-radius: 999px;
+  width: fit-content;
+  box-shadow: 0 2px 10px rgba(123, 0, 60, 0.06);
+  margin-bottom: 14px;
+}
 .story-card h2 {
-  font-size: clamp(2.5rem, 4.8vw, 4rem);
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
   color: var(--berry);
-  line-height: 1.15;
+  line-height: 1.2;
   text-shadow: 0 2px 20px rgba(232, 221, 196, 0.95), 0 0 5px rgba(255, 255, 255, 0.85);
 }
 .story-card .lede {
@@ -2468,7 +2516,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   white-space: nowrap;
   font: 700 18px var(--label);
   color: var(--cafe-berry);
-  min-width: 48px;
+  min-width: 52px;
   text-align: right;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
@@ -2479,17 +2527,15 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   font-weight: 500;
   color: var(--cafe-soft);
   margin-left: 6px;
-  min-width: 64px;
-  width: 64px;
+  min-width: 66px;
+  width: 66px;
   text-align: left;
   white-space: nowrap;
   display: inline-block;
 }
 
 #menu.cafe-orbit .item-unit.item-unit-empty {
-  min-width: 64px;
-  width: 64px;
-  display: inline-block;
+  display: none !important;
 }
 
 /* Bottom Controls Bar: 96px free space at bottom right for WhatsApp button */
@@ -2719,18 +2765,18 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   #menu.cafe-orbit .item-price-val {
     font-size: 15.5px;
     font-weight: 800;
-    min-width: 44px;
+    min-width: 48px;
+    text-align: right;
   }
   #menu.cafe-orbit .item-unit {
     font-size: 11.5px;
     color: #523844;
-    min-width: 56px;
-    width: 56px;
+    min-width: 54px;
+    width: 54px;
     margin-left: 4px;
   }
   #menu.cafe-orbit .item-unit.item-unit-empty {
-    min-width: 56px;
-    width: 56px;
+    display: none !important;
   }
   #menu.cafe-orbit .cafe-bottom-bar {
     display: flex;
@@ -3428,7 +3474,7 @@ footer.site-footer.is-revealed .footer-bottom {
       <div class="frame" id="hero-frame">
         <video id="hero-video" class="hero-video-el" src="video/hero-16x9.mp4" muted playsinline preload="auto"></video>
         <picture class="still">
-          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=5">
+          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=6">
           <img src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
         </picture>
       </div>
@@ -3459,6 +3505,8 @@ footer.site-footer.is-revealed .footer-bottom {
   <section class="sec story" id="story">
     <!-- Top transition from Hero paper to cashew background -->
     <div class="story-top-blend" aria-hidden="true"></div>
+    <!-- Bottom transition blending smoothly into Section 3 Sweets -->
+    <div class="story-bottom-blend" aria-hidden="true"></div>
 
     <!-- Cashew Falling 3D Video Background (Full Visibility, No Blur) -->
     <div class="story-bg-video-wrap" aria-hidden="true">
@@ -3958,6 +4006,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=38"></script>
+<script src="js/clean.js?v=39"></script>
 </body>
 </html>

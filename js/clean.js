@@ -101,7 +101,7 @@
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
   function getHeroVideoPath() {
-    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=5' : 'video/hero-16x9.mp4';
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=6' : 'video/hero-16x9.mp4';
   }
 
   var currentHeroTarget = getHeroVideoPath();
@@ -1585,14 +1585,12 @@
 
 
 
-      // Top bar style switch: stays dark/transparent while hero is active, switches to solid when framed on cream
-
-      var heroDark = s < 0.98;
+      // Top bar style switch: on mobile, matches cream 2nd page header; on desktop, switches cleanly
+      var isMobileView = window.innerWidth <= 860;
+      var heroDark = !isMobileView && (s < 0.98);
 
       if (topBar) {
-
-        topBar.classList.toggle('solid', !(rect && rect.bottom > 80 && heroDark));
-
+        topBar.classList.toggle('solid', isMobileView || !(rect && rect.bottom > 80 && heroDark));
       }
 
     }
@@ -1987,8 +1985,6 @@
         html += '<span class="item-price-val">' + item.price + '</span>';
         if (item.unit) {
           html += '<span class="item-unit">' + item.unit + '</span>';
-        } else {
-          html += '<span class="item-unit item-unit-empty" aria-hidden="true"></span>';
         }
         html += '</div></li>';
       });
