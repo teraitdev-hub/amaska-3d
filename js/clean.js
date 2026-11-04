@@ -150,23 +150,11 @@
       heroVideo.src = path;
       heroVideo.load();
     }
-
+    heroVideo.pause();
     try {
-      var primePlay = heroVideo.play();
-      if (primePlay && primePlay.then) {
-        primePlay.then(function () {
-          heroVideo.pause();
-          heroVideo.currentTime = 0;
-          setHeroReady();
-        }).catch(function () {
-          setHeroReady();
-        });
-      } else {
-        setHeroReady();
-      }
-    } catch (_) {
-      setHeroReady();
-    }
+      heroVideo.currentTime = 0;
+    } catch (_) {}
+    setHeroReady();
   }
 
   if (heroVideo) {
@@ -198,7 +186,8 @@
     if (!c || !c.v) return;
     var dur = (c.v.duration && !isNaN(c.v.duration) && c.v.duration > 1) ? c.v.duration : c.duration;
     var target = clamp(p, 0, 1) * (dur - 0.05);
-    c.t = (c.t == null) ? target : c.t + (target - c.t) * 0.25;
+    var lerpFactor = (window.innerWidth <= 860) ? 0.50 : 0.25;
+    c.t = (c.t == null) ? target : c.t + (target - c.t) * lerpFactor;
     if (Math.abs(c.v.currentTime - c.t) > 0.02) {
       try {
         if (c.v.readyState >= 1) {
