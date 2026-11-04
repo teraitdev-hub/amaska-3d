@@ -26,6 +26,14 @@
 
   var easeInOutCubic = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
+  var debounce = function (fn, ms) {
+    var timer;
+    return function () {
+      clearTimeout(timer);
+      timer = setTimeout(fn, ms);
+    };
+  };
+
 
 
   // Set real viewport height for mobile browser URL bar resizing
@@ -173,13 +181,17 @@
     loadHeroVideo(currentHeroTarget);
 
     var lastIsMobileHero = window.innerWidth <= 860;
-    window.addEventListener('resize', debounce(function () {
-      var nowIsMob = window.innerWidth <= 860;
-      if (nowIsMob !== lastIsMobileHero) {
-        lastIsMobileHero = nowIsMob;
-        loadHeroVideo(getHeroVideoPath());
-      }
-    }, 200), { passive: true });
+    var heroResizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(heroResizeTimer);
+      heroResizeTimer = setTimeout(function () {
+        var nowIsMob = window.innerWidth <= 860;
+        if (nowIsMob !== lastIsMobileHero) {
+          lastIsMobileHero = nowIsMob;
+          loadHeroVideo(getHeroVideoPath());
+        }
+      }, 200);
+    }, { passive: true });
   }
 
   function scrubHero(c, p) {
