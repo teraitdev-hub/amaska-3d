@@ -408,7 +408,7 @@
     var autoSlideTimer = null;
     var resumeTimer = null;
     var mouseIdleTimer = null;
-    var isSectionInView = true;
+    var isSectionInView = false;
     var cards = [];
     var dots = [];
 
@@ -448,11 +448,9 @@
       video.defaultMuted = true;
       video.loop = true;
       video.playsInline = true;
-      video.autoplay = true;
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
       video.setAttribute('muted', '');
-      video.setAttribute('autoplay', '');
       video.preload = (i === 0) ? 'auto' : 'none';
       video.src = sweet.video;
 
@@ -793,10 +791,9 @@
 
     // Keep left & right video streams in sync
     if (leftLightVideo && rightLightVideo) {
-      leftLightVideo.addEventListener('timeupdate', function () {
-        if (Math.abs(leftLightVideo.currentTime - rightLightVideo.currentTime) > 0.15) {
-          rightLightVideo.currentTime = leftLightVideo.currentTime;
-        }
+      // Native loop sync without decoder flushing
+      leftLightVideo.addEventListener('ended', function () {
+        if (rightLightVideo) rightLightVideo.currentTime = 0;
       });
       leftLightVideo.addEventListener('play', function () {
         if (!prefersReducedMotion) {
@@ -863,10 +860,11 @@
     }, { threshold: 0.1 });
     coverflowObserver.observe(secEl);
 
-    // Initial setup
+    // Initial setup (Observer will trigger when scrolled into view)
     updateCoverflowPositions();
-    startAutoSlide();
-    if (isSectionInView || isElementInViewport(secEl)) {
+    if (isElementInViewport(secEl)) {
+      isSectionInView = true;
+      startAutoSlide();
       playLightVideos();
     }
   }
@@ -2320,12 +2318,18 @@
       });
     }, { threshold: 0.15 });
     cafeObserver.observe(secEl);
-    secEl.classList.add('is-in-view');
 
-    // Initial Render
+    // Initial Render (Observer will start video & auto-advance when scrolled into view)
     renderMenuList(0);
-    startAutoAdvance();
-    preloadNextVideo();
+    if (secEl.getBoundingClientRect().top < (window.innerHeight || 800) && secEl.getBoundingClientRect().bottom > 0) {
+      isSectionInView = true;
+      secEl.classList.add('is-in-view');
+      startAutoAdvance();
+      if (!prefersReducedMotion) {
+        if (portalCurVideo) portalCurVideo.play().catch(function () {});
+        if (cafeBgVideo) cafeBgVideo.play().catch(function () {});
+      }
+    }
   }
 
   // ==========================================================================

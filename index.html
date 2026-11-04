@@ -3336,7 +3336,7 @@ footer.site-footer.is-revealed .footer-bottom {
 
     <!-- Cashew Falling 3D Video Background (Full Visibility, No Blur) -->
     <div class="story-bg-video-wrap" aria-hidden="true">
-      <video class="story-bg-video" id="story-cashew-video" src="video/cashew-falling-16x9.mp4" muted playsinline loop autoplay preload="auto"></video>
+      <video class="story-bg-video" id="story-cashew-video" src="video/cashew-falling-16x9.mp4" muted playsinline loop preload="metadata"></video>
     </div>
 
     <div class="wrap">
@@ -3361,12 +3361,12 @@ footer.site-footer.is-revealed .footer-bottom {
     <div class="coverflow-light-wrap" aria-hidden="true">
       <!-- Left Wing (0% to 50%, fades out toward center) -->
       <div class="coverflow-light-wing coverflow-light-left">
-        <video class="coverflow-light-video" id="sweets-light-video-left" src="assets/bg/sweets-light.mp4" muted playsinline loop autoplay preload="auto"></video>
+        <video class="coverflow-light-video" id="sweets-light-video-left" src="assets/bg/sweets-light.mp4" muted playsinline loop preload="metadata"></video>
         <img class="coverflow-light-poster" src="assets/bg/sweets-light.webp" alt="" aria-hidden="true">
       </div>
       <!-- Right Wing (Mirrored scaleX(-1), 50% to 100%, fades out toward center) -->
       <div class="coverflow-light-wing coverflow-light-right">
-        <video class="coverflow-light-video" id="sweets-light-video-right" src="assets/bg/sweets-light.mp4" muted playsinline loop autoplay preload="auto"></video>
+        <video class="coverflow-light-video" id="sweets-light-video-right" src="assets/bg/sweets-light.mp4" muted playsinline loop preload="metadata"></video>
         <img class="coverflow-light-poster" src="assets/bg/sweets-light.webp" alt="" aria-hidden="true">
       </div>
     </div>
@@ -3667,7 +3667,7 @@ footer.site-footer.is-revealed .footer-bottom {
     
     <!-- Ambient Background Animation Video (Full Display, Blended with Cream Background) -->
     <div class="cafe-bg-video-wrap" aria-hidden="true">
-      <video class="cafe-bg-video" id="cafe-bg-video" src="assets/Cafe/cafe-bg-animation.mp4" poster="assets/Cafe/cafe-bg-poster.webp" autoplay loop muted playsinline preload="auto"></video>
+      <video class="cafe-bg-video" id="cafe-bg-video" src="assets/Cafe/cafe-bg-animation.mp4" poster="assets/Cafe/cafe-bg-poster.webp" loop muted playsinline preload="metadata"></video>
     </div>
     <div class="cafe-container">
       <!-- Top Heading (Centered, 1 line each, tight spacing) -->
@@ -3689,12 +3689,12 @@ footer.site-footer.is-revealed .footer-bottom {
               <div class="cafe-circle-portal" id="cafe-circle-portal">
                 <!-- Current Active Layer -->
                 <div class="portal-layer portal-layer-cur" id="portal-layer-cur">
-                  <video class="portal-video" id="portal-video-cur" src="assets/Cafe/Green_water_pouring_on_puri_7ad784e6.mp4" muted playsinline loop autoplay preload="auto"></video>
+                  <video class="portal-video" id="portal-video-cur" src="assets/Cafe/Green_water_pouring_on_puri_7ad784e6.mp4" muted playsinline loop preload="metadata"></video>
                   <img class="portal-poster" id="portal-poster-cur" src="assets/Cafe/poster-chaat.webp" alt="Special Chaat plate">
                 </div>
                 <!-- Incoming Transition Layer -->
                 <div class="portal-layer portal-layer-next" id="portal-layer-next">
-                  <video class="portal-video" id="portal-video-next" muted playsinline loop preload="auto"></video>
+                  <video class="portal-video" id="portal-video-next" muted playsinline loop preload="none"></video>
                   <img class="portal-poster" id="portal-poster-next" alt="Incoming plate">
                   <div class="portal-ripple-rim" aria-hidden="true"></div>
                 </div>
@@ -3832,6 +3832,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=28"></script>
+<script src="js/clean.js?v=29"></script>
 </body>
 </html>
