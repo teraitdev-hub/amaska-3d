@@ -456,15 +456,18 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     transform: none;
   }
 
-  /* Scale cashew video on mobile so nuts appear smaller, realistic, and delicate */
+  /* Scale cashew video on mobile so nuts appear truly small, delicate, and realistic */
   .story-bg-video {
     top: auto;
     bottom: 0;
-    height: 60%;
-    object-fit: cover;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 42%;
+    object-fit: contain;
     object-position: center bottom;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 18%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%);
   }
 }
 
@@ -1046,7 +1049,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     height: auto;
     min-height: 0;
     max-height: none;
-    padding: clamp(20px, 3vh, 26px) 16px clamp(40px, 5vh, 56px) 16px;
+    padding: clamp(48px, 6.5vh, 64px) 16px clamp(36px, 5vh, 48px) 16px;
     justify-content: flex-start;
     gap: 0;
   }
@@ -1106,16 +1109,16 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    margin: 0 auto;
-    padding: 0;
+    gap: 6px;
+    margin: 16px auto 0 auto;
+    padding: 0 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     width: 100%;
-    max-width: 320px;
+    max-width: 340px;
   }
   .sweets-coverflow .coverflow-dot {
-    width: 26px;
-    height: 26px;
-    font-size: 0.65rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.68rem;
     font-weight: 700;
   }
 }
@@ -3887,6 +3890,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=34"></script>
+<script src="js/clean.js?v=35"></script>
 </body>
 </html>
