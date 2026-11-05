@@ -101,7 +101,7 @@
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
   function getHeroVideoPath() {
-    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=7' : 'video/hero-16x9.mp4';
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=8' : 'video/hero-16x9.mp4';
   }
 
   var currentHeroTarget = getHeroVideoPath();
