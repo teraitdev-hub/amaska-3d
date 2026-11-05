@@ -406,13 +406,8 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
   }
   .hero .frame::after {
     background: linear-gradient(180deg, 
-      rgba(24,2,10,0.82) 0%, 
-      rgba(24,2,10,0.25) 20%, 
-      transparent 35%, 
-      transparent 58%, 
-      rgba(24,2,10,0.55) 70%, 
-      rgba(24,2,10,0.92) 88%, 
-      rgba(24,2,10,0.98) 100%
+      rgba(20,2,10,0.35) 0%, 
+      transparent 25%
     );
   }
   .hero .hero-headline-wrap {
@@ -484,7 +479,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 38%;
+    object-position: center center;
     transform: none;
   }
 
@@ -3491,7 +3486,7 @@ footer.site-footer.is-revealed .footer-bottom {
       <div class="frame" id="hero-frame">
         <video id="hero-video" class="hero-video-el" src="video/hero-16x9.mp4" muted playsinline preload="auto"></video>
         <picture class="still">
-          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=6">
+          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=7">
           <img src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
         </picture>
       </div>
@@ -4022,6 +4017,6 @@ window.AMASKA_CLIPS = [
   'box-gk', 'box-df', 'box-royal'
 ];
 </script>
-<script src="js/clean.js?v=41"></script>
+<script src="js/clean.js?v=42"></script>
 </body>
 </html>
