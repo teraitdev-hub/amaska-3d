@@ -410,6 +410,22 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
       transparent 25%
     );
   }
+  /* NEW 9:16 hero: fit video to phone WIDTH so the whole box is visible (no side crop),
+     pin it to the bottom, and fade its top edge into the dark curtain. */
+  .hero .frame video,
+  .hero .frame picture.still {
+    inset: auto 0 0 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 720 / 1280;
+    transform: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%);
+            mask-image: linear-gradient(180deg, transparent 0, #000 16%);
+  }
+  .hero .frame video { object-fit: cover; }
+  .hero .frame picture.still img { width: 100%; height: 100%; object-fit: cover; }
+  .hero .frame { background: #1a0907; transition: none; }
+  .hero h2 em { color: var(--gold-light) !important; }
   .hero .hero-headline-wrap {
     left: 20px;
     right: 20px;
@@ -473,15 +489,7 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     margin: 10px auto 0 auto; 
     max-width: 380px; 
   }
-  .hero .frame video, .hero .frame .still, .hero .frame picture.still, .hero .frame picture.still img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    transform: none;
-  }
+  /* (old full-height mobile video rule removed: see width-fit block above) */
 
   /* Cashew video scaled on mobile so nuts appear truly small, delicate, and realistic */
   .story-bg-video {
@@ -3486,7 +3494,7 @@ footer.site-footer.is-revealed .footer-bottom {
       <div class="frame" id="hero-frame">
         <video id="hero-video" class="hero-video-el" src="video/hero-16x9.mp4" muted playsinline preload="auto"></video>
         <picture class="still">
-          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=8">
+          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=9">
           <img src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
         </picture>
       </div>

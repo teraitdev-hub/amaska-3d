@@ -101,7 +101,7 @@
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
   function getHeroVideoPath() {
-    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=8' : 'video/hero-16x9.mp4';
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=9' : 'video/hero-16x9.mp4';
   }
 
   var currentHeroTarget = getHeroVideoPath();
@@ -1514,6 +1514,15 @@
       if (heroClip && heroClip.ready) {
 
         scrubHero(heroClip, clamp(p / 0.74, 0, 1));
+
+        // Mobile: tint the empty area above the video so it blends with the video's top edge
+        if (window.innerWidth <= 860 && heroVideo && heroVideo.duration) {
+          var kf = [[0,[26,9,7]],[0.30,[27,9,7]],[0.37,[53,30,17]],[0.50,[64,42,30]],[0.62,[31,13,9]],[0.75,[30,12,9]],[0.88,[55,18,24]],[1,[74,25,35]]];
+          var ff = clamp(heroVideo.currentTime / heroVideo.duration, 0, 1), a = kf[0], b = kf[kf.length - 1];
+          for (var ki = 0; ki < kf.length - 1; ki++) { if (ff >= kf[ki][0] && ff <= kf[ki + 1][0]) { a = kf[ki]; b = kf[ki + 1]; break; } }
+          var kt = b[0] === a[0] ? 0 : (ff - a[0]) / (b[0] - a[0]);
+          heroFrame.style.backgroundColor = 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(a[1][i] + (b[1][i] - a[1][i]) * kt); }).join(',') + ')';
+        }
 
       } else if (heroStill) {
 
