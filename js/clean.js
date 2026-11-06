@@ -101,7 +101,7 @@
   var heroVideo = heroFrame ? heroFrame.querySelector('video') : null;
 
   function getHeroVideoPath() {
-    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=9' : 'video/hero-16x9.mp4';
+    return window.innerWidth <= 860 ? 'video/hero-9x16.mp4?v=10' : 'video/hero-16x9.mp4';
   }
 
   var currentHeroTarget = getHeroVideoPath();
@@ -184,14 +184,17 @@
 
   function scrubHero(c, p) {
     if (!c || !c.v) return;
+    var mob = window.innerWidth <= 860;
     var dur = (c.v.duration && !isNaN(c.v.duration) && c.v.duration > 1) ? c.v.duration : c.duration;
     var target = clamp(p, 0, 1) * (dur - 0.05);
-    var lerpFactor = (window.innerWidth <= 860) ? 0.50 : 0.25;
+    var lerpFactor = mob ? 0.22 : 0.25;
     c.t = (c.t == null) ? target : c.t + (target - c.t) * lerpFactor;
-    if (Math.abs(c.v.currentTime - c.t) > 0.02) {
+    // Phones: wait until the previous seek finished, so requests never pile up (this is what caused the lag)
+    if (mob && c.v.seeking) return;
+    if (Math.abs(c.v.currentTime - c.t) > (mob ? 0.04 : 0.02)) {
       try {
         if (c.v.readyState >= 1) {
-          c.v.currentTime = c.t;
+          if (mob && c.v.fastSeek) { c.v.fastSeek(c.t); } else { c.v.currentTime = c.t; }
         }
       } catch (_) {}
     }
@@ -1517,11 +1520,11 @@
 
         // Mobile: tint the empty area above the video so it blends with the video's top edge
         if (window.innerWidth <= 860 && heroVideo && heroVideo.duration) {
-          var kf = [[0,[26,9,7]],[0.30,[27,9,7]],[0.37,[53,30,17]],[0.50,[64,42,30]],[0.62,[31,13,9]],[0.75,[30,12,9]],[0.88,[55,18,24]],[1,[74,25,35]]];
+          var kf = [[0,[26,9,7]],[0.30,[27,9,7]],[0.37,[53,30,17]],[0.50,[64,42,30]],[0.62,[31,13,9]],[0.75,[30,12,9]],[0.85,[62,20,29]],[0.9,[72,24,34]],[1,[75,25,36]]];
           var ff = clamp(heroVideo.currentTime / heroVideo.duration, 0, 1), a = kf[0], b = kf[kf.length - 1];
           for (var ki = 0; ki < kf.length - 1; ki++) { if (ff >= kf[ki][0] && ff <= kf[ki + 1][0]) { a = kf[ki]; b = kf[ki + 1]; break; } }
           var kt = b[0] === a[0] ? 0 : (ff - a[0]) / (b[0] - a[0]);
-          heroFrame.style.backgroundColor = 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(a[1][i] + (b[1][i] - a[1][i]) * kt); }).join(',') + ')';
+          var heroBg = 'rgb(' + [0, 1, 2].map(function (i) { return Math.round(a[1][i] + (b[1][i] - a[1][i]) * kt); }).join(',') + ')'; heroFrame.style.backgroundColor = heroBg; heroFrame.style.setProperty('--hero-bg', heroBg);
         }
 
       } else if (heroStill) {

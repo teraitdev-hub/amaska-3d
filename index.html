@@ -419,10 +419,19 @@ em { font-style: italic; font-weight: 400; color: var(--berry); }
     height: auto;
     aspect-ratio: 720 / 1280;
     transform: none;
-    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%);
-            mask-image: linear-gradient(180deg, transparent 0, #000 16%);
   }
   .hero .frame video { object-fit: cover; }
+  .hero .frame::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(var(--vh) - 177.78vw);
+    height: 28.4vw;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--hero-bg, #1a0907), rgba(26,9,7,0));
+    background: linear-gradient(180deg, var(--hero-bg, #1a0907), transparent);
+  }
   .hero .frame picture.still img { width: 100%; height: 100%; object-fit: cover; }
   .hero .frame { background: #1a0907; transition: none; }
   .hero h2 em { color: var(--gold-light) !important; }
@@ -3494,7 +3503,7 @@ footer.site-footer.is-revealed .footer-bottom {
       <div class="frame" id="hero-frame">
         <video id="hero-video" class="hero-video-el" src="video/hero-16x9.mp4" muted playsinline preload="auto"></video>
         <picture class="still">
-          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=9">
+          <source media="(max-width: 860px)" srcset="assets/box-pink-portrait.webp?v=10">
           <img src="assets/box-pink.webp" alt="Amaska signature keepsake gift box" width="1200" height="900">
         </picture>
       </div>
