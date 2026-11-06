@@ -1581,17 +1581,32 @@
 
       if (s > 0) {
 
-        var vhInset = s * (mob ? 10 : 12);
+        var vhTop = s * (mob ? 13 : 12);
 
-        var vwInset = s * (mob ? 4 : 6);
+        var vwInset = s * (mob ? 6.5 : 6);
+
+        var vhBot = s * (mob ? 11 : 12);
 
         var radius = s * 28;
 
-        heroFrame.style.clipPath = 'inset(' + vhInset.toFixed(1) + 'vh ' + vwInset.toFixed(1) + 'vw ' + vhInset.toFixed(1) + 'vh round ' + radius.toFixed(1) + 'px)';
+        heroFrame.style.clipPath = 'inset(' + vhTop.toFixed(1) + 'vh ' + vwInset.toFixed(1) + 'vw ' + vhBot.toFixed(1) + 'vh round ' + radius.toFixed(1) + 'px)';
+
+        if (mob) {
+          var vScale = 1 - s * 0.08;
+          var vShift = -s * 8;
+          var trStr = 'translateY(' + vShift.toFixed(1) + 'px) scale(' + vScale.toFixed(3) + ')';
+          if (heroVideo) heroVideo.style.transform = trStr;
+          if (heroStill) heroStill.style.transform = trStr;
+        }
 
       } else {
 
         heroFrame.style.clipPath = 'none';
+
+        if (mob) {
+          if (heroVideo) heroVideo.style.transform = '';
+          if (heroStill) heroStill.style.transform = '';
+        }
 
       }
 
